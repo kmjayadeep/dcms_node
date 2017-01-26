@@ -6,7 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var helmet = require('helmet');
 
-var index = require('./routes/index');
+var token = require('./middlewares/token')
+var router = require('./routes/index');
 
 var app = express();
 
@@ -16,8 +17,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(helmet())
+app.use(token)
 
-app.use('/', index);
+app.use('/', router);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
