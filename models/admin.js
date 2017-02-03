@@ -5,11 +5,7 @@
 module.exports = function(sequelize, DataTypes) {
     var Admin = sequelize.define("admin", {
         name: DataTypes.STRING,
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        email: {
+        uid: {
             type: DataTypes.STRING,
             allowNull: false,
             unique: true

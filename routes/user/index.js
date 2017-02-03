@@ -9,7 +9,27 @@ router.get('/', function(req, res, next) {
 });
 
 /**
- * 
+ * @api {post} /user/login Login a User
+ * @apiName Login
+ * @apiGroup User
+ *
+ * @apiParam {String} idToken Id token from login.
+ *
+ * @apiSuccessExample {json} {
+  "accomodation": "none",
+  "status": "pending",
+  "id": 4,
+  "uid": "bJ1rrx0lpVSbUmBaWphU0BHfItD2",
+  "updatedAt": "2017-02-03T18:31:02.000Z",
+  "createdAt": "2017-02-03T18:31:02.000Z"
+}
+ *
+ * @apiErrorExample {json} 
+ * 			{
+                code: 1,
+                data: error,
+                message: "Auth Error"
+            }
  */
 router.post('/login', function(req, res, next) {
     idToken = req.body.idToken;
@@ -19,22 +39,22 @@ router.post('/login', function(req, res, next) {
             var uid = decodedToken.uid;
             var student = Student.build(req.body);
             student.uid = uid;
+            delete student.id;
             debug(student);
-            debug(uid);
+            // debug(uid);
             Student.sync().then(function() {
                 Student.findOrCreate({
                     where: {
                         uid: student.uid
-                    }
-                }).then(function(result) {
-                    var studentEntry = result[0], // the instance of the Student
-                        created = result[1]; // boolean stating if it was created or not
-                    if (created) {
-                        // console.log('Student already exists');
-                    }
-		            res.send(studentEntry);
+                    }/*,
+                    defaults: {
+                    	name: student.name
+                    }*/
+
+                }).spread(function(studentEntry, created) {
+                    res.send(studentEntry);
                 });
-            })
+            });
         }).catch(function(error) {
             res.status(500).send({
                 code: 1,
