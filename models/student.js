@@ -5,11 +5,7 @@
 module.exports = function(sequelize, DataTypes) {
     var Students = sequelize.define("student", {
         name: DataTypes.STRING,
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        email: {
+        uid: {
             type: DataTypes.STRING,
             allowNull: false,
             unique: true

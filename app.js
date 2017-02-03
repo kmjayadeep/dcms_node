@@ -5,11 +5,19 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var helmet = require('helmet');
+var admin = require("firebase-admin");
 
 var token = require('./middlewares/token')
 var router = require('./routes/index');
 
 var app = express();
+
+var serviceAccount = require("./drishti-bd782-firebase-adminsdk-lkv0m-fb8c09e2b9.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://drishti-bd782.firebaseio.com/"
+});
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
