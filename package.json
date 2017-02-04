@@ -20,5 +20,11 @@
     "sequelize": "^3.30.0",
     "serve-favicon": "~2.3.0",
     "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "apidoc": "^0.17.5",
+    "gulp": "^3.9.1",
+    "gulp-apidoc": "^0.2.5",
+    "gulp-open": "^2.0.0"
   }
 }

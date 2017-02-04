@@ -9,13 +9,14 @@ router.get('/', function(req, res, next) {
 });
 
 /**
- * @api {post} /user/login Login a User
+ * @api {post} /user/login Login a Student
  * @apiName Login
- * @apiGroup User
+ * @apiGroup Student
  *
  * @apiParam {String} idToken Id token from login.
  *
- * @apiSuccessExample {json} {
+ * @apiSuccessExample {json} success
+ * {
   "accomodation": "none",
   "status": "pending",
   "id": 4,
@@ -24,47 +25,39 @@ router.get('/', function(req, res, next) {
   "createdAt": "2017-02-03T18:31:02.000Z"
 }
  *
- * @apiErrorExample {json} 
- * 			{
-                code: 1,
-                data: error,
-                message: "Auth Error"
-            }
+ * @apiErrorExample {json} error
+{
+	code: 1,
+	data: error,
+	message: "Auth Error"
+}
  */
 router.post('/login', function(req, res, next) {
-    idToken = req.body.idToken;
+    var student = Student.build(req.body);
+    student.uid = req.uid;
+    delete student.id;
+    debug(student);
+    Student.findOrCreate({
+        where: {
+            uid: student.uid
+        }
+        /*,
+        defaults: {
+        	name: student.name
+        }*/
 
-    admin.auth().verifyIdToken(idToken)
-        .then(function(decodedToken) {
-            var uid = decodedToken.uid;
-            var student = Student.build(req.body);
-            student.uid = uid;
-            delete student.id;
-            debug(student);
-            Student.sync().then(function() {
-                Student.findOrCreate({
-                    where: {
-                        uid: student.uid
-                    }
-                    /*,
-                    defaults: {
-                    	name: student.name
-                    }*/
-
-                }).spread(function(studentEntry, created) {
-                    res.send({
-                        student: studentEntry,
-                        created: created
-                    });
-                });
-            });
-        }).catch(function(error) {
-            res.status(500).send({
+    }).spread(function(studentEntry, created) {
+        res.send({
+            student: studentEntry,
+            created: created
+        });
+    }).catch(function(error) {
+        res.status(500)
+            .send({
                 code: 1,
                 data: error,
-                message: "Auth Error"
-            })
-            debug(error);
-        });
+                message: "Could not create user"
+            });
+    });
 })
 module.exports = router;
