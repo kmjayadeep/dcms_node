@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var helmet = require('helmet');
 var admin = require("firebase-admin");
-
+var cors = require('cors');
 var token = require('./middlewares/token')
 var router = require('./routes/index');
 
@@ -19,6 +19,7 @@ admin.initializeApp({
   databaseURL: "https://drishti-bd782.firebaseio.com/"
 });
 
+app.use(cors())
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -26,7 +27,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(helmet())
 app.use(token)
-
 app.use('/', router);
 
 // catch 404 and forward to error handler

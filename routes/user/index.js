@@ -41,18 +41,21 @@ router.post('/login', function(req, res, next) {
             student.uid = uid;
             delete student.id;
             debug(student);
-            // debug(uid);
             Student.sync().then(function() {
                 Student.findOrCreate({
                     where: {
                         uid: student.uid
-                    }/*,
+                    }
+                    /*,
                     defaults: {
                     	name: student.name
                     }*/
 
                 }).spread(function(studentEntry, created) {
-                    res.send(studentEntry);
+                    res.send({
+                        student: studentEntry,
+                        created: created
+                    });
                 });
             });
         }).catch(function(error) {
