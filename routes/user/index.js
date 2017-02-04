@@ -12,25 +12,53 @@ router.get('/', function(req, res, next) {
  * @api {post} /user/login Login a Student
  * @apiName Login
  * @apiGroup Student
- *
+ * @apiVersion 1.0.0
+ * 
  * @apiParam {String} idToken Id token from login.
  *
- * @apiSuccessExample {json} success
- * {
-  "accomodation": "none",
-  "status": "pending",
-  "id": 4,
-  "uid": "bJ1rrx0lpVSbUmBaWphU0BHfItD2",
-  "updatedAt": "2017-02-03T18:31:02.000Z",
-  "createdAt": "2017-02-03T18:31:02.000Z"
+ * @apiSuccessExample {json} new student
+ {
+  "student": {
+    "accomodation": "none",
+    "status": "pending",
+    "id": 2,
+    "uid": "bJ1rrx0lpVSbUPs1WphU0BHfItD2",
+    "updatedAt": "2017-02-04T09:37:09.000Z",
+    "createdAt": "2017-02-04T09:37:09.000Z"
+  },
+  "created": true
+}
+
+ * @apiSuccessExample {json} logging in old student
+{
+  "student": {
+    "id": 1,
+    "name": "nisham",
+    "uid": "bJ1rrx0lpVSbUPs1WphU0BHfItD2",
+    "phone": "65431687",
+    "accomodation": "none",
+    "status": "pending",
+    "createdAt": "2017-02-04T09:21:52.000Z",
+    "updatedAt": "2017-02-04T09:21:52.000Z",
+    "collegeId": 654
+  },
+  "created": false
 }
  *
- * @apiErrorExample {json} error
+ * @apiErrorExample {json} authentication error
 {
-	code: 1,
-	data: error,
-	message: "Auth Error"
+    code: 1,
+    data: {},
+    message: "Authentication Error"
 }
+
+ * @apiErrorExample {json} creation error
+{
+    code: 1,
+    data: {},
+    message: "Could not create user"
+}
+
  */
 router.post('/login', function(req, res, next) {
     var student = Student.build(req.body);
@@ -43,7 +71,7 @@ router.post('/login', function(req, res, next) {
         }
         /*,
         defaults: {
-        	name: student.name
+            name: student.name
         }*/
 
     }).spread(function(studentEntry, created) {

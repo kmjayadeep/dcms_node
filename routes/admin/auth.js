@@ -5,17 +5,9 @@ var admin = require("firebase-admin");
 var _ = require('underscore')
 var Promise = require('bluebird')
 var models = require("../../models");
-var token = require('../../middlewares/token');
-
-router.get('/', function(req, res, next) {
-    res.status(401).send('unauthorized access');
-});
-
-
-
 
 /**
- * @api {post} /user/login Login an Admin
+ * @api {post} /dcms-admin/auth/login Login an Admin
  * @apiName Login
  * @apiGroup Admin
  *

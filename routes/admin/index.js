@@ -6,6 +6,8 @@ router.get('/', function(req, res, next) {
 });
 
 
-router.use('/auth',require('./auth'))
+router.use('/auth',require('./auth'));
+
+router.use('/event',require('./event'));
 
 module.exports = router;

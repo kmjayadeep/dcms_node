@@ -21,7 +21,7 @@ module.exports = function(sequelize, DataTypes) {
         picture: DataTypes.STRING,
         status: {
             type: DataTypes.BOOLEAN,
-            defaultValue: true
+            defaultValue: false
         }
 
     }, {
