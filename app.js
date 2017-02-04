@@ -9,14 +9,15 @@ var admin = require("firebase-admin");
 var cors = require('cors');
 var token = require('./middlewares/token')
 var router = require('./routes/index');
+var config = require('./config')()
 
 var app = express();
 
-var serviceAccount = require("./drishti-bd782-firebase-adminsdk-lkv0m-fb8c09e2b9.json");
+var serviceAccount = require("./drishti-admin.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://drishti-bd782.firebaseio.com/"
+  databaseURL: config.firebase.databaseURL
 });
 
 app.use(cors())

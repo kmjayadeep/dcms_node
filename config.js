@@ -4,6 +4,9 @@ var config = {
             database: 'dcms',
             username: 'root',
             password: ''
+        },
+        firebase: {
+            databaseURL: 'https://drishti-bd782.firebaseio.com/'
         }
     },
     'production': {
