@@ -10,12 +10,18 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false,
             unique: true
         },
+        email:{
+            type:DataTypes.STRING,
+            unique:true,
+            allowNull:true
+        },
         phone: {
             type: DataTypes.STRING
         },
+        picture: DataTypes.STRING,
         status: {
             type: DataTypes.BOOLEAN,
-            defaultValue: true //email verification pending
+            defaultValue: true
         }
 
     }, {
