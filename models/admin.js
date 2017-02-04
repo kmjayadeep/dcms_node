@@ -20,19 +20,13 @@ module.exports = function(sequelize, DataTypes) {
         },
         picture: DataTypes.STRING,
         status: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false
+            type: DataTypes.INTEGER,
+            defaultValue: 0
         }
 
     }, {
         classMethods: {
             associate: function(models) {
-                models.admin.belongsToMany(models.event, {
-                    through: "event_admins"
-                })
-                models.event.belongsToMany(models.admin, {
-                    through: "event_admins"
-                })
             }
         }
 

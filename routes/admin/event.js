@@ -4,6 +4,8 @@ var models = require('../../models');
 
 /**
  * @apiDefine tokenErrors
+ * @apiHeader {String} x-auth-token idToken from Login
+ * 
  *  * @apiErrorExample {json} invalid user error
 {
   "code": 1,
@@ -22,20 +24,15 @@ var models = require('../../models');
   "message": "Authentication Error"
 }
 
- * @apiErrorExample {json} delete non existent event
-{
-  "code": 5,
-  "data": {},
-  "message": "Could not delete events"
-}
+ * 
  */
 /**
- * @api {put} /dcms-admin/event/
+ * @api {put} /dcms-admin/event/ add event
  * @apiName Put Event
  * @apiGroup Admin/Event
  *
- * @apiHeader {String} x-auth-token idToken from Login
  *
+ * @apiParam {Integer} id column Id
  * @apiParam {String} name Name of event
  * @apiParam {String} description Description of Event
  * @apiParam {Text} format Event Format
@@ -98,12 +95,12 @@ router.put('/', function(req, res, next) {
 });
 
 /**
- * @api {get} /dcms-admin/event/
+ * @api {get} /dcms-admin/event/ get event list
  * @apiName Get Events
  * @apiGroup Admin/Event
  *
- * @apiHeader {String} x-auth-token idToken from Login
  *
+ * @apiParam {Integer} [id] Column Id
  * @apiParam {String} [name] Name of event
  * @apiParam {String} [description] Description of Event
  * @apiParam {Text} [format] Event Format
@@ -159,29 +156,10 @@ router.get('/', (req, res, next) => {
 });
 
 /**
- * @api {delete} /dcms-admin/event/
+ * @api {delete} /dcms-admin/event/:id delete events
  * @apiName Delete Events
  * @apiGroup Admin/Event
  * 
- * @apiHeader {String} x-auth-token idToken from Login
- *
- * @apiParam {String} [name] Name of event
- * @apiParam {String} [description] Description of Event
- * @apiParam {Text} [format] Event Format
- * @apiParam {Text} [problemStatement] problem statement
- * @apiParam {Integer} [prize1] first Prize
- * @apiParam {Integer} [prize2] second Prize
- * @apiParam {Integer} [prize3] third Prize
- * @apiParam {Bool} [group] Whether or not it is a group event
- * @apiParam {String} [image] Event Image Url
- * @apiParam {Integer} [maxParticipants] max no of participants (0-unlimited)
- * @apiParam {Integer} [maxGroups] max no of groups (0-unlimited)
-
- * @apiParamExample sample request
- * {
- *   "id": "1",
- * }
-
  * @apiSuccessExample {json} deleted
 {
   "deleted": true,
@@ -194,13 +172,21 @@ router.get('/', (req, res, next) => {
   "message": "success"
 }
 
+@apiErrorExample {json} delete non existent event
+{
+  "code": 5,
+  "data": {},
+  "message": "Could not delete events"
+}
+
  * @apiUse tokenErrors
  * 
  */
-
-router.delete('/', (req, res, next) => {
+router.delete('/:id', (req, res, next) => {
     models.event.destroy({
-        where: req.body
+        where: {
+            id: req.params.id
+        }
     }).then(boolean => {
         res.json({
             deleted: boolean == 1,
@@ -216,32 +202,28 @@ router.delete('/', (req, res, next) => {
 });
 
 /**
- * @api {post} /dcms-admin/event/
+ * @api {post} /dcms-admin/event/:id edit events
  * @apiName Edit Events
  * @apiGroup Admin/Event
  * 
- * @apiHeader {String} x-auth-token idToken from Login
  *
  * @apiParamExample sample request
 {
-	"where" : {
-		"name" : "myEvent"
-	},
-	"update" : {
-		"description": "updated description"
-	}
+    "description": "updated description"
 }
 
  * @apiSuccessExample {json} edited
-	success
+  success
 
  * @apiUse tokenErrors
  */
 
-router.post('/', (req, res, next) => {
+router.post('/:id', (req, res, next) => {
     models.event.update(
-        req.body.update, {
-            where: req.body.where
+        req.body, {
+            where: {
+                id: req.params.id
+            }
         }).then(result => {
         res.send("success");
     }).catch(error => {
@@ -251,5 +233,48 @@ router.post('/', (req, res, next) => {
             message: "Could not edit events"
         });
     });
-})
+});
+
+/**
+ * @api {put} /dcms-admin/event/admin Add admin to events
+ * @apiName adminAdd
+ * @apiGroup Admin/Event
+ * 
+ *
+ * @apiParamExample sample request
+{
+  "eventId" : 1,
+  "adminIds" : [1]
+}
+
+ * @apiSuccessExample {json} edited
+  success
+
+ * @apiUse tokenErrors
+ */
+router.put('/admin', (req, res, next) => {
+    var eventAdminArray = req.body.adminIds.map(adminId => {
+        return {
+            eventId: req.body.eventId,
+            adminId: adminId
+        }
+    });
+    debug(eventAdminArray)
+    models.eventAdmin.destroy({
+        where: {
+            eventId: req.body.eventId
+        }
+    }).then(() => {
+        models.eventAdmin.bulkCreate(eventAdminArray);
+    }).then(() => {
+        res.send("success");
+    }).catch(error => {
+        debug(error)
+        res.status(400).send({
+            code: 7,
+            data: error,
+            message: "Could not add event admins"
+        })
+    });
+});
 module.exports = router;

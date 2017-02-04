@@ -8,7 +8,6 @@ var models = require('../models');
  */
 module.exports = function(req, res, next) {
     idToken = req.body.idToken || req.headers['x-auth-token'];
-    debug(idToken)
     if (!idToken)
         return res.status(401).send({
             code: 1,
@@ -20,6 +19,7 @@ module.exports = function(req, res, next) {
     admin.auth().verifyIdToken(idToken)
         .then(function(decodedToken) {
             req.uid = decodedToken.uid;
+            debug(req.uid);
             req.profile = decodedToken;
             if (req.url.startsWith('/user')) {
                 //TODO check if suspended
@@ -31,9 +31,11 @@ module.exports = function(req, res, next) {
                     where: {
                         uid: req.profile.user_id
                     }
-                }).then(user => {
-                    if (user && user.status)
+                }).then(admin => {
+                    if (admin && admin.status){
+                        req.admin = admin;
                         return next();
+                    }
                     throw {
                         msg: "Not Verified"
                     }
