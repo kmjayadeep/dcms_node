@@ -42,9 +42,7 @@ router.post('/login', function(req, res, next) {
     }).then(user => {
         if (user)
             return new Promise((resolve, reject) => {
-                if (user.status)
-                    resolve(user)
-                reject('user blocked')
+                resolve(user)
             });
         return models.admin.create({
             uid: profile.user_id,
@@ -53,7 +51,7 @@ router.post('/login', function(req, res, next) {
             email: profile.email
         });
     }).then(user => {
-        res.json(_.pick(user, 'name', 'picture'))
+        res.json(_.pick(user, 'name', 'picture', 'status'))
     }).catch(function(error) {
         res.status(500).send({
             code: 2,

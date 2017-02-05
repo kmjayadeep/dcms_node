@@ -22,7 +22,15 @@ module.exports = function(sequelize, DataTypes) {
         status: {
             type: DataTypes.INTEGER,
             defaultValue: 0
-        }
+        },
+        eventMail:DataTypes.STRING
+        /*
+        Status codes
+        ------------
+        0 - not verified
+        10 - superadmin
+
+        */
 
     }, {
         classMethods: {

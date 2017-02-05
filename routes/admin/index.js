@@ -96,11 +96,11 @@ router.get('/', (req, res, next) => {
  *
  * @apiParamExample sample request
 {
-	"email":"random email"
+    "email":"random email"
 }
 
  * @apiSuccessExample {json} edited
-	success
+    success
 
  * @apiUse tokenErrors
  */
@@ -113,19 +113,20 @@ router.post('/:id', (req, res, next) => {
         });
     }
     models.admin.update(
-        req.body, {
-            where: {
-            	id: req.params.id
-            }
-        }).then(result => {
-        res.send("success");
-    }).catch(error => {
-        res.status(400).send({
-            code: 6,
-            data: error,
-            message: "Could not edit events"
+            req.body, {
+                where: {
+                    id: req.params.id
+                }
+            })
+        .then(result => {
+            res.send("success");
+        }).catch(error => {
+            res.status(400).send({
+                code: 6,
+                data: error,
+                message: "Could not edit events"
+            });
         });
-    });
 });
 
 module.exports = router;
