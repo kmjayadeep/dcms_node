@@ -15,7 +15,14 @@ module.exports = function(req, res, next) {
                 msg: "No authentication token"
             },
             message: "Authentication Error"
-        })
+        });
+    else if (req.url.startsWith('/user/updateGuntScore'))
+    {
+        debug(idToken);
+        //random verification for gunt communication
+        if(idToken=='yhZ1EftMKZa9')
+            return next();
+    }
     admin.auth().verifyIdToken(idToken)
         .then(function(decodedToken) {
             req.uid = decodedToken.uid;

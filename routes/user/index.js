@@ -69,15 +69,10 @@ router.post('/login', function(req, res, next) {
         where: {
             uid: student.uid
         }
-        /*,
-        defaults: {
-            name: student.name
-        }*/
-
     }).spread(function(studentEntry, created) {
         res.send({
             student: studentEntry,
-            created: created
+            created: created || studentEntry.name == null
         });
     }).catch(function(error) {
         res.status(500)
@@ -87,5 +82,57 @@ router.post('/login', function(req, res, next) {
                 message: "Could not create user"
             });
     });
-})
+});
+
+/**
+ * @api {post} /user/updateGuntScore update normalised score from gunt
+ * @apiGroup GUNT
+ * @apiVersion 1.0.0
+ * 
+ * @apiHeader {String} idToken token given to gunt.
+ *
+ * @apiSuccessExample {json} success
+{
+    code: 0,
+    message: "Success"
+}
+
+* @apiErrorExample {json} updation error
+{
+    code: 1,
+    message: "Could not update",
+    data: error
+}
+
+* @apiErrorExample {json} authentication error
+{
+    code: 1,
+    data: {},
+    message: "Authentication Error"
+}
+
+
+ */
+router.post('/updateGuntScore', (req, res, next) => {
+    debug(req.body);
+    Student.update({
+        normalisedScore: req.body.normalisedScore
+    }, {
+        where: {
+            uid: req.body.uid,
+        }
+    }).then(function(result) {
+        res.json({
+            code: 0,
+            message: "Success"
+        });
+    }).catch(function(error) {
+        res.status(400)
+            .json({
+                code: 1,
+                message: "Could not update",
+                data: error
+            });
+    });
+});
 module.exports = router;

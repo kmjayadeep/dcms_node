@@ -22,8 +22,15 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.ENUM,
             values: ['active', 'banned', 'pending'],
             defaultValue: 'pending' //email verification pending
+        },
+        score: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0 
+        },
+        normalisedScore: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0 
         }
-
     }, {
         classMethods: {
             associate: function(models) {
