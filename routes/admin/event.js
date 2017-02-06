@@ -154,6 +154,53 @@ router.get('/', (req, res, next) => {
             })
     })
 });
+/**
+ * @api {get} /dcms-admin/event/ get event
+ * @apiName Get Event
+ * @apiGroup Admin/Event
+ *
+ *
+ * @apiParam {Integer} [id] event id
+
+
+ * @apiSuccessExample {json} success
+  {
+    "id": 1,
+    "name": "myEvent",
+    "description": "my event",
+    "format": "this event format",
+    "problemStatement": "problems is this",
+    "prize1": 1000,
+    "prize2": 500,
+    "prize3": 300,
+    "group": true,
+    "image": "someurl",
+    "maxParticipants": 0,
+    "maxGroups": 0,
+    "createdAt": "2017-02-04T11:03:57.000Z",
+    "updatedAt": "2017-02-04T11:03:57.000Z"
+  }
+ * @apiUse tokenErrors
+ */
+router.get('/:id', (req, res, next) => {
+    models.event.findOne({
+        where: {
+          id:req.params.id
+        },
+        include:[{
+          model:models.admin
+        }]
+    }).then((event) => {
+        res.json(event);
+    }).catch(error => {
+        res.status(400)
+            .send({
+                code: 4,
+                data: error,
+                message: "Could not fetch events"
+            })
+    })
+});
 
 /**
  * @api {delete} /dcms-admin/event/:id delete events
@@ -225,7 +272,7 @@ router.post('/:id', (req, res, next) => {
                 id: req.params.id
             }
         }).then(result => {
-        res.send("success");
+        res.send(result);
     }).catch(error => {
         res.status(400).send({
             code: 6,
@@ -252,22 +299,22 @@ router.post('/:id', (req, res, next) => {
 
  * @apiUse tokenErrors
  */
-router.put('/admin', (req, res, next) => {
+router.put('/admin/:eventId', (req, res, next) => {
     var eventAdminArray = req.body.adminIds.map(adminId => {
         return {
-            eventId: req.body.eventId,
+            eventId: req.params.eventId,
             adminId: adminId
         }
     });
     debug(eventAdminArray)
     models.eventAdmin.destroy({
         where: {
-            eventId: req.body.eventId
+            eventId: req.params.eventId
         }
     }).then(() => {
         models.eventAdmin.bulkCreate(eventAdminArray);
-    }).then(() => {
-        res.send("success");
+    }).then((data) => {
+        res.json(data);
     }).catch(error => {
         debug(error)
         res.status(400).send({
