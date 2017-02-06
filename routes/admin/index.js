@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var models = require('../../models');
 var debug = require('debug')('admin');
+var _ = require('underscore')
 
 var superAdminStatus = 10;
 router.use('/auth', require('./auth'));
@@ -80,10 +81,84 @@ router.get('/', (req, res, next) => {
         res.json(list);
     }).catch(error => {
         res.status(400)
-            .send({
+            .json({
                 code: 8,
                 data: error,
                 message: "Could not fetch admins"
+            });
+    })
+});
+
+/**
+ * @apiDefine optional
+ * 
+ * @apiParam {Integer} [id] Admin Id
+ */
+
+/**
+ * @apiDefine token
+ * @apiHeader {String} x-auth-token idToken from Login
+ * 
+ *  * @apiErrorExample {json} invalid user error
+{
+  "code": 1,
+  "data": {
+    "msg": "Not Verified"
+  },
+  "message": "Authentication Error"
+}
+
+ * @apiErrorExample {json} no token error
+{
+  "code": 1,
+  "data": {
+    "msg": "No authentication token"
+  },
+  "message": "Authentication Error"
+}
+
+ * 
+ */
+
+/**
+ * @api {get} /dcms-admin/:id get admin
+ * @apiName Get Admin
+ * @apiGroup Admin
+ *
+ *@apiUse optional
+
+ * @apiSuccessExample {json} success
+  {
+    "id": 1,
+    "name": "nisham mohammed",
+    "uid": "bJ1rrx0lpVSbUPs1WphU0BHfItD2",
+    "email": "mnishamk1995@gmail.com",
+    "phone": null,
+    "picture": "https://lh6.googleusercontent.com/-LdIUNFJBriQ/AAAAAAAAAAI/AAAAAAAAAvI/HUwlqct9yJY/photo.jpg",
+    "status": 1,
+    "createdAt": "2017-02-04T14:02:17.000Z",
+    "updatedAt": "2017-02-04T14:02:17.000Z"
+  }
+
+ * @apiUse token
+ */
+router.get('/:id', (req, res, next) => {
+    debug(req.params.id)
+    models.admin.findOne({
+        where: {
+            id: req.params.id
+        }
+    }).then((admin) => {
+        if(admin)
+            res.json(admin);
+        else
+            throw 'invalid id'
+    }).catch(error => {
+        res.status(400)
+            .json({
+                code: 8,
+                data: error,
+                message: "Could not fetch admin"
             });
     })
 });
@@ -106,6 +181,8 @@ router.get('/', (req, res, next) => {
  */
 
 router.post('/:id', (req, res, next) => {
+    let body = _.pick(req.body,'name','phone','eventMail','status')
+    console.log(body)
     if (req.admin.status < superAdminStatus) {
         return res.status(401).send({
             code: 9,
@@ -113,18 +190,18 @@ router.post('/:id', (req, res, next) => {
         });
     }
     models.admin.update(
-            req.body, {
+            body, {
                 where: {
                     id: req.params.id
                 }
             })
         .then(result => {
-            res.send("success");
+            res.json(result);
         }).catch(error => {
             res.status(400).send({
                 code: 6,
                 data: error,
-                message: "Could not edit events"
+                message: "Could not edit Admin"
             });
         });
 });
