@@ -2,8 +2,8 @@ var express = require('express');
 var router = express.Router();
 var models = require('../../models');
 var debug = require('debug')('admin');
-var _ = require('underscore')
-
+var _ = require('underscore');
+constant = require('../../constant');
 var superAdminStatus = 10;
 router.use('/auth', require('./auth'));
 router.use('/event', require('./event'));
@@ -150,7 +150,7 @@ router.get('/:id', (req, res, next) => {
             id: req.params.id
         }
     }).then((admin) => {
-        if(admin)
+        if (admin)
             res.json(admin);
         else
             throw 'invalid id'
@@ -182,29 +182,28 @@ router.get('/:id', (req, res, next) => {
  */
 
 router.post('/:id', (req, res, next) => {
-    let body = _.pick(req.body,'name','phone','eventMail','status')
-    console.log(body)
-    if (req.admin.status < superAdminStatus) {
-        return res.status(401).send({
-            code: 9,
-            message: "Needs super admin privilages"
-        });
-    }
-    models.admin.update(
-            body, {
-                where: {
-                    id: req.params.id
-                }
-            })
-        .then(result => {
-            res.json(result);
-        }).catch(error => {
-            res.status(400).send({
-                code: 6,
-                data: error,
-                message: "Could not edit Admin"
+    let body = _.pick(req.body, 'name', 'phone', 'eventMail', 'status')
+    try {
+        debug(body)
+        if (req.admin.status < superAdminStatus) {
+            return res.status(401).json(constant.needsSuperAdmin);
+        }
+
+        models.admin.update(
+                body, {
+                    where: {
+                        id: req.params.id
+                    }
+                })
+            .then(result => {
+                res.json(result);
+            }).catch(error => {
+                constant.cannotEditAdmin.error = error;
+                res.status(400).json(constant.cannotEditAdmin);
             });
-        });
+    } catch (err) {
+        debug(err);
+    }
 });
 
 module.exports = router;

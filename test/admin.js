@@ -6,7 +6,8 @@ var should = require('should'),
     input = require('./testData'),
     constant = require('../constant'),
     config = require('../config')(),
-    md5 = require('md5');
+    md5 = require('md5'),
+    models = require('../models');
 
 var url = config.serverUrl;
 describe('Admin Functions', () => {
@@ -52,4 +53,48 @@ describe('Admin Functions', () => {
         });
 
     });
+    describe('SuperAdmin', () => {
+        it('SuperAdmin can change other admin status', done => {
+            models.admin.update({
+                status: 10
+            }, {
+                where: {
+                    uid: constant.testProfile.uid
+                }
+            }).then(result => {
+                // create test admin
+                return models.admin.create(input.testAdmin1);
+            }).then(result => {
+                return new Promise((resolve, rej) => {
+                    id = result.dataValues.id;
+                    request(url)
+                        .post('/dcms-admin/' + id)
+                        .set('x-auth-token', input.token)
+                        .send(input.testAdmin2)
+                        .expect('Content-Type', /json/)
+                        .expect(200)
+                        .end((err, res) => {
+                            should.not.exist(err);
+                            if (err)
+                                rej(err);
+                            resolve();
+                        });
+                });
+            }).then(() => {
+                return models.admin.destroy({
+                    where: input.testAdmin2
+                });
+            }).then(() => {
+                done();
+            }).catch(error => {
+                //delete test admin if couldn't
+                models.admin.destroy({
+                    where: input.testAdmin1
+                });
+                should.not.exist(error);
+                done();
+            })
+        })
+    });
+    
 });

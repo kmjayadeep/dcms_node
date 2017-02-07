@@ -4,7 +4,9 @@ var fs = require("fs");
 var path = require("path");
 var Sequelize = require("sequelize");
 var config = require('../config')()
-var sequelize = new Sequelize(config.mysql.database, config.mysql.username, config.mysql.password);
+var sequelize = new Sequelize(config.mysql.database, config.mysql.username, config.mysql.password, {
+    logging: false
+});
 
 var db = {};
 

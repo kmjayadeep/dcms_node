@@ -13,10 +13,6 @@ module.exports = {
         email_verified: true,
         uid: 'cJ2crx0lpVSbvPs1VbhU0BHgItE2'
     },
-    studentNotFound: {
-        code: 11,
-        message: "Student could not be found"
-    },
     noAuthToken: {
         code: 1,
         data: {
@@ -30,5 +26,21 @@ module.exports = {
             msg: "Wrong authentication token"
         },
         message: "Authentication Error"
+    },
+    adminNotFound: {
+        code: 2,
+        message: "Could not find admin data"
+    },
+    cannotEditAdmin: {
+        code: 6,
+        message: "Could not edit Admin"
+    },
+    needsSuperAdmin: {
+        code: 9,
+        message: "Needs super admin privilages"
+    },
+    studentNotFound: {
+        code: 11,
+        message: "Student could not be found"
     }
 }

@@ -22,38 +22,50 @@ module.exports = function(req, res, next) {
         //random verification for test purposes
         req.uid = constant.testProfile.uid;
         req.profile = constant.testProfile;
-        return next();
-    }
-    admin.auth().verifyIdToken(idToken)
-        .then(function(decodedToken) {
-            req.uid = decodedToken.uid;
-            debug(req.uid);
-            req.profile = decodedToken;
-            debug(req.profile);
-            if (req.url.startsWith('/user')) {
-                //TODO check if suspended
-                next();
-            } else if (req.url.startsWith('/dcms-admin/auth')) {
-                next();
-            } else if (req.url.startsWith('/dcms-admin')) {
-                models.admin.findOne({
-                    where: {
-                        uid: req.profile.user_id
-                    }
-                }).then(admin => {
-                    if (admin && admin.status) {
-                        req.admin = admin;
-                        return next();
-                    }
-                    throw {
-                        msg: "Not Verified"
-                    }
-                }).catch(error => {
-                    res.status(401).json(constant.wrongToken);
-                });
-            } else
-                next();
-        }).catch((error) => {
-            res.status(401).json(constant.wrongToken);
+        models.admin.findOne({
+            where: {
+                uid: req.uid
+            }
+        }).then(admin => {
+            debug(admin);
+            if (admin)
+                req.admin = admin;
+            return next();
+        }).catch(error => {
+            res.status(400).json(constant.adminNotFound);
         });
+    } else {
+        admin.auth().verifyIdToken(idToken)
+            .then(function(decodedToken) {
+                req.uid = decodedToken.uid;
+                debug(req.uid);
+                req.profile = decodedToken;
+                debug(req.profile);
+                if (req.url.startsWith('/user')) {
+                    //TODO check if suspended
+                    next();
+                } else if (req.url.startsWith('/dcms-admin/auth')) {
+                    next();
+                } else if (req.url.startsWith('/dcms-admin')) {
+                    models.admin.findOne({
+                        where: {
+                            uid: req.profile.user_id
+                        }
+                    }).then(admin => {
+                        if (admin && admin.status) {
+                            req.admin = admin;
+                            return next();
+                        }
+                        throw {
+                            msg: "Not Verified"
+                        }
+                    }).catch(error => {
+                        res.status(401).json(constant.wrongToken);
+                    });
+                } else
+                    next();
+            }).catch((error) => {
+                res.status(401).json(constant.wrongToken);
+            });
+    }
 }
