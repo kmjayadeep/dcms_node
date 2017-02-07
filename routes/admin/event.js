@@ -1,5 +1,5 @@
 var router = require('express').Router();
-var debug = require('debug')('event')
+var debug = require('debug')('admin')
 var models = require('../../models');
 
 /**

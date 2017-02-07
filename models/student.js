@@ -6,6 +6,7 @@ module.exports = function(sequelize, DataTypes) {
     var Students = sequelize.define("student", {
         name: DataTypes.STRING,
         uid: {
+            //user_id from google idToken
             type: DataTypes.STRING,
             allowNull: false,
             unique: true
@@ -21,14 +22,14 @@ module.exports = function(sequelize, DataTypes) {
         status: {
             type: DataTypes.ENUM,
             values: ['active', 'banned', 'pending'],
-            defaultValue: 'pending' //email verification pending
+            defaultValue: 'active'
         },
         score: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.DECIMAL,
             defaultValue: 0 
         },
         normalisedScore: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.DECIMAL,
             defaultValue: 0 
         }
     }, {

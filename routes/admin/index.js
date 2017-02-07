@@ -7,6 +7,7 @@ var _ = require('underscore')
 var superAdminStatus = 10;
 router.use('/auth', require('./auth'));
 router.use('/event', require('./event'));
+router.use('/student', require('./student'));
 
 /**
  * @apiDefine optional
