@@ -26,11 +26,19 @@ module.exports = function(sequelize, DataTypes) {
         },
         score: {
             type: DataTypes.DECIMAL,
-            defaultValue: 0 
+            defaultValue: 0
+        },
+        registered: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        picture: {
+            type: DataTypes.STRING,
+            defaultValue: 'https://firebasestorage.googleapis.com/v0/b/drishti-bd782.appspot.com/o/images%2F1486499663_icons_user.png?alt=media&token=3af2649d-cdfb-4a4d-93df-64dfb5285593'
         },
         normalisedScore: {
             type: DataTypes.DECIMAL,
-            defaultValue: 0 
+            defaultValue: 0
         }
     }, {
         classMethods: {

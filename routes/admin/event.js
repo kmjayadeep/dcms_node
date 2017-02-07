@@ -1,6 +1,7 @@
 var router = require('express').Router();
 var debug = require('debug')('admin')
 var models = require('../../models');
+var constant = require('../../constant');
 
 /**
  * @apiDefine tokenErrors
@@ -85,12 +86,9 @@ router.put('/', function(req, res, next) {
             if (event)
                 return res.json(event)
         }).catch(error => {
+            constant.cantCreateEvent.data = error;
             res.status(400)
-                .send({
-                    code: 3,
-                    data: error,
-                    message: "Could not create Event"
-                })
+                .json(constant.cantCreateEvent);
         })
 });
 
@@ -146,68 +144,86 @@ router.get('/', (req, res, next) => {
     }).then((list) => {
         res.json(list);
     }).catch(error => {
+        constant.cantfetchEvent.data = error;
         res.status(400)
-            .send({
-                code: 4,
-                data: error,
-                message: "Could not fetch events"
-            })
+            .json(constant.cantfetchEvent)
     })
 });
 /**
- * @api {get} /dcms-admin/event/ get event
+ * @api {get} /dcms-admin/event/:id get event
  * @apiName Get Event
  * @apiGroup Admin/Event
  *
  *
- * @apiParam {Integer} [id] event id
-
-
  * @apiSuccessExample {json} success
-  {
-    "id": 1,
-    "name": "myEvent",
-    "description": "my event",
-    "format": "this event format",
-    "problemStatement": "problems is this",
-    "prize1": 1000,
-    "prize2": 500,
-    "prize3": 300,
-    "group": true,
-    "image": "someurl",
-    "maxParticipants": 0,
-    "maxGroups": 0,
-    "createdAt": "2017-02-04T11:03:57.000Z",
-    "updatedAt": "2017-02-04T11:03:57.000Z"
-  }
+{
+  "id": 1000000006,
+  "name": "Event Name changed",
+  "description": "Event description changed",
+  "format": "Event format",
+  "problemStatement": "Event problem Statement",
+  "prize1": 1,
+  "prize2": 2,
+  "prize3": 3,
+  "group": false,
+  "image": null,
+  "maxParticipants": 0,
+  "maxGroups": 0,
+  "createdAt": "2017-02-07T15:49:05.000Z",
+  "updatedAt": "2017-02-07T15:49:06.000Z",
+  "admins": [],
+  "allAdmins": [
+    {
+      "id": 1,
+      "name": "nisham mohammed",
+      "uid": "bJ1rrx0lpVSbUPs1WphU0BHfItD2",
+      "email": "mnishamk1995@gmail.com",
+      "phone": null,
+      "picture": "https://lh6.googleusercontent.com/-LdIUNFJBriQ/AAAAAAAAAAI/AAAAAAAAAvI/HUwlqct9yJY/photo.jpg",
+      "status": 0,
+      "eventMail": null,
+      "createdAt": "2017-02-07T15:03:46.000Z",
+      "updatedAt": "2017-02-07T15:03:46.000Z"
+    },
+    {
+      "id": 2,
+      "name": "John Doe",
+      "uid": "cJ2crx0lpVSbvPs1VbhU0BHgItE2",
+      "email": "johndoe@gmail.com",
+      "phone": null,
+      "picture": "https://lh6.googleusercontent.com/-LdIUNFJBriQ/AAAAAAAAAAI/AAAAAAAAAvI/HUwlqct9yJY/photo.jpg",
+      "status": 10,
+      "eventMail": null,
+      "createdAt": "2017-02-07T15:28:51.000Z",
+      "updatedAt": "2017-02-07T15:53:11.000Z"
+    }
+  ]
+}
  * @apiUse tokenErrors
  */
 router.get('/:id', (req, res, next) => {
     let event = null
     models.event.findOne({
-            where: {
-                id: req.params.id
-            },
-            include: [{
-                model: models.admin
-            }]
-        }).then((ev) => {
-            event = ev.toJSON()
-            return models.admin.findAll()
-        }).then(admins => {
-            let adminIds = event.admins.map(admin => admin.id)
-            event.allAdmins = admins.filter(admin => {
-              return !adminIds.includes(admin.id)
-            })
-            res.json(event)
-        }).catch(error => {
-            res.status(400)
-                .send({
-                    code: 4,
-                    data: error,
-                    message: "Could not fetch events"
-                })
+        where: {
+            id: req.params.id
+        },
+        include: [{
+            model: models.admin
+        }]
+    }).then((ev) => {
+        event = ev.toJSON()
+        return models.admin.findAll()
+    }).then(admins => {
+        let adminIds = event.admins.map(admin => admin.id)
+        event.allAdmins = admins.filter(admin => {
+            return !adminIds.includes(admin.id)
         })
+        res.json(event)
+    }).catch(error => {
+        constant.cantfetchEvent.data = error;
+        res.status(400)
+            .json(constant.cantfetchEvent)
+    })
 });
 
 /**
@@ -248,11 +264,8 @@ router.delete('/:id', (req, res, next) => {
             message: "success"
         });
     }).catch(error => {
-        res.status(400).send({
-            code: 5,
-            data: error,
-            message: "Could not delete events"
-        });
+        constant.cantDeleteEvent.data = error;
+        res.status(400).json(constant.cantDeleteEvent);
     })
 });
 
@@ -280,13 +293,11 @@ router.post('/:id', (req, res, next) => {
                 id: req.params.id
             }
         }).then(result => {
-        res.send(result);
+        debug("not array", result);
+        return res.json(result);
     }).catch(error => {
-        res.status(400).send({
-            code: 6,
-            data: error,
-            message: "Could not edit events"
-        });
+        constant.cantEditEvent.data = error;
+        return res.status(400).json(constant.cantEditEvent);
     });
 });
 
@@ -308,7 +319,7 @@ router.post('/:id', (req, res, next) => {
  * @apiUse tokenErrors
  */
 router.put('/admin/:eventId', (req, res, next) => {
-  console.log(req.body)
+    console.log(req.body)
     var eventAdminArray = req.body.adminIds.map(adminId => {
         return {
             eventId: req.params.eventId,
@@ -326,7 +337,7 @@ router.put('/admin/:eventId', (req, res, next) => {
         res.json(1);
     }).catch(error => {
         debug(error)
-        res.status(400).send({
+        res.status(400).json({
             code: 7,
             data: error,
             message: "Could not add event admins"

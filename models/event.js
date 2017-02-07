@@ -3,9 +3,8 @@
 module.exports = function(sequelize, DataTypes) {
     var Events = sequelize.define("event", {
         name: DataTypes.STRING,
-        description: DataTypes.STRING,
+        description: DataTypes.TEXT,
         format: DataTypes.TEXT, //event format
-        problemStatement: DataTypes.TEXT, //problem statement,
         prize1: DataTypes.INTEGER, //first prize
         prize2: DataTypes.INTEGER, //second
         prize3: DataTypes.INTEGER, //third

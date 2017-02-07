@@ -3,6 +3,7 @@ var debug = require('debug')('user');
 var admin = require("firebase-admin");
 var router = express.Router();
 var models = require("../../models");
+var constant = require("../../constant");
 var Student = models.student;
 router.get('/', function(req, res, next) {
     res.status(401).send('no route');
@@ -16,33 +17,21 @@ router.get('/', function(req, res, next) {
  * 
  * @apiParam {String} idToken Id token from login.
  *
- * @apiSuccessExample {json} new student
- {
-  "student": {
-    "accomodation": "none",
-    "status": "pending",
-    "id": 2,
-    "uid": "bJ1rrx0lpVSbUPs1WphU0BHfItD2",
-    "updatedAt": "2017-02-04T09:37:09.000Z",
-    "createdAt": "2017-02-04T09:37:09.000Z"
-  },
-  "created": true
-}
-
- * @apiSuccessExample {json} logging in old student
+ * @apiSuccessExample {json} success
 {
-  "student": {
-    "id": 1,
-    "name": "nisham",
-    "uid": "bJ1rrx0lpVSbUPs1WphU0BHfItD2",
-    "phone": "65431687",
-    "accomodation": "none",
-    "status": "pending",
-    "createdAt": "2017-02-04T09:21:52.000Z",
-    "updatedAt": "2017-02-04T09:21:52.000Z",
-    "collegeId": 654
-  },
-  "created": false
+  "id": 4,
+  "name": "John Doe",
+  "uid": "cJ2crx0lpVSbvPs1VbhU0BHgItE2",
+  "phone": null,
+  "accomodation": "none",
+  "status": "active",
+  "score": 0,
+  "registered": false,
+  "picture": "https://lh6.googleusercontent.com/-LdIUNFJBriQ/AAAAAAAAAAI/AAAAAAAAAvI/HUwlqct9yJY/photo.jpg",
+  "normalisedScore": 0,
+  "createdAt": "2017-02-07T15:24:00.000Z",
+  "updatedAt": "2017-02-07T15:24:00.000Z",
+  "collegeId": null
 }
  *
  * @apiErrorExample {json} authentication error
@@ -61,27 +50,32 @@ router.get('/', function(req, res, next) {
 
  */
 router.post('/login', function(req, res, next) {
-    var student = Student.build(req.body);
+    debug(req.profile);
+    debug(req.uid);
+
+    var student = req.profile;
     student.uid = req.uid;
+    student.name = req.profile.name;
+    if (req.profile.picture)
+        student.picture = req.profile.picture;
     delete student.id;
-    debug(student);
-    Student.findOrCreate({
+    Student.findOne({
         where: {
-            uid: student.uid
+            uid: req.uid
         }
-    }).spread(function(studentEntry, created) {
-        res.send({
-            student: studentEntry,
-            created: created || studentEntry.name == null
-        });
-    }).catch(function(error) {
-        res.status(500)
-            .send({
-                code: 1,
-                data: error,
-                message: "Could not create user"
-            });
-    });
+    }).then(result => {
+        if (result)
+            return new Promise((res, rej) => {
+                res(result);
+            })
+        return Student.create(req.profile);
+    }).then(student => {
+        return res.json(student);
+    }).catch(err => {
+        constant.studentCreateError.data = err;
+        return res.status(400)
+            .json(constant.studentCreateError);
+    })
 });
 
 /**

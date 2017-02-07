@@ -22,8 +22,9 @@ describe('Student Functions', () => {
                 .expect(200)
                 .end((err, res) => {
                     should.not.exist(err);
-                    res.body.should.have.property('student');
-                    res.body.should.have.property('created');
+                    res.body.should.have.property('registered').be.eql(false);
+                    res.body.should.have.property('name').be.not.eql(null);
+                    res.body.should.have.property('picture').be.not.eql(null);
                     done();
                 });
         });

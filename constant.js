@@ -31,9 +31,29 @@ module.exports = {
         code: 2,
         message: "Could not find admin data"
     },
-    cannotEditAdmin: {
+    studentCreateError: {
+        code: 3,
+        message: "Could not create user"
+    },
+    cantCreateEvent: {
+        code: 4,
+        message: "Could not create Event"
+    },
+    cantfetchEvent: {
+        code: 5,
+        message: "Could not fetch events"
+    },
+    cantEditEvent: {
         code: 6,
+        message: "Could not edit events"
+    },
+    cannotEditAdmin: {
+        code: 7,
         message: "Could not edit Admin"
+    },
+    cantDeleteEvent: {
+        code: 5,
+        message: "Could not delete events"
     },
     needsSuperAdmin: {
         code: 9,
@@ -42,5 +62,5 @@ module.exports = {
     studentNotFound: {
         code: 11,
         message: "Student could not be found"
-    }
+    },
 }
