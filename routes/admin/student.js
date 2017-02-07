@@ -36,43 +36,6 @@ router.get('/', (req, res, next) => {
 });
 
 /**
- * @api {get} /dcms-admin/student/:id get student list
- * @apiGroup Admin
- *
- *
- * @apiSuccessExample {json} success
-  {
-    "id": 2,
-    "name": null,
-    "uid": "cJ2crx0lpVSbvPs1VbhU0BHgItE2",
-    "phone": null,
-    "accomodation": "none",
-    "status": "pending",
-    "score": 0,
-    "normalisedScore": 0,
-    "createdAt": "2017-02-07T09:52:54.000Z",
-    "updatedAt": "2017-02-07T09:52:54.000Z",
-    "collegeId": null
-  }
- * @apiUse tokenErrors
- */
-router.get('/:id', (req, res, next) => {
-    models.student.findOne({
-        where: {
-            id: req.params.id
-        },
-        include: [{
-            model: models.event
-        }]
-    }).then((result) => {
-        res.json(result)
-    }).catch(err => {
-        constant.studentNotFound.error = err;
-        res.status(400).json(constant.studentNotFound);
-    });
-});
-
-/**
  * @api {get} /dcms-admin/student/:id get student details
  * @apiDescription get the student and his registered events, by specifying student id
  * @apiGroup Admin
@@ -90,7 +53,6 @@ router.get('/:id', (req, res, next) => {
   "normalisedScore": 0,
   "createdAt": "2017-02-07T09:52:54.000Z",
   "updatedAt": "2017-02-07T09:52:54.000Z",
-  "collegeId": null,
   "events": [
     {
       "id": 1,
@@ -115,7 +77,8 @@ router.get('/:id', (req, res, next) => {
         "studentId": 2
       }
     }
-  ]
+  ],
+  "college": "dfghj"
 } 
 * @apiUse tokenErrors
  */
@@ -123,14 +86,21 @@ router.get('/:id', (req, res, next) => {
     models.student.findOne({
         where: {
             id: req.params.id
-        }
+        },
+        include: [{
+            model: models.event
+        }, {
+            model: models.college
+        }]
     }).then((result) => {
+        result = result.toJSON();
+        if (result.college)
+            result.college = result.college.name;
         res.json(result)
     }).catch(err => {
         constant.studentNotFound.error = err;
         res.status(400).json(constant.studentNotFound);
     });
 });
-
 
 module.exports = router;
