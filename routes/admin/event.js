@@ -183,23 +183,31 @@ router.get('/', (req, res, next) => {
  * @apiUse tokenErrors
  */
 router.get('/:id', (req, res, next) => {
+    let event = null
     models.event.findOne({
-        where: {
-          id:req.params.id
-        },
-        include:[{
-          model:models.admin
-        }]
-    }).then((event) => {
-        res.json(event);
-    }).catch(error => {
-        res.status(400)
-            .send({
-                code: 4,
-                data: error,
-                message: "Could not fetch events"
+            where: {
+                id: req.params.id
+            },
+            include: [{
+                model: models.admin
+            }]
+        }).then((ev) => {
+            event = ev.toJSON()
+            return models.admin.findAll()
+        }).then(admins => {
+            let adminIds = event.admins.map(admin => admin.id)
+            event.allAdmins = admins.filter(admin => {
+              return !adminIds.includes(admin.id)
             })
-    })
+            res.json(event)
+        }).catch(error => {
+            res.status(400)
+                .send({
+                    code: 4,
+                    data: error,
+                    message: "Could not fetch events"
+                })
+        })
 });
 
 /**
@@ -300,6 +308,7 @@ router.post('/:id', (req, res, next) => {
  * @apiUse tokenErrors
  */
 router.put('/admin/:eventId', (req, res, next) => {
+  console.log(req.body)
     var eventAdminArray = req.body.adminIds.map(adminId => {
         return {
             eventId: req.params.eventId,
@@ -314,7 +323,7 @@ router.put('/admin/:eventId', (req, res, next) => {
     }).then(() => {
         models.eventAdmin.bulkCreate(eventAdminArray);
     }).then((data) => {
-        res.json(data);
+        res.json(1);
     }).catch(error => {
         debug(error)
         res.status(400).send({
