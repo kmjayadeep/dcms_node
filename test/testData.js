@@ -22,5 +22,7 @@ module.exports = {
         name: "Event Name changed",
         description: "Event description changed",
     },
-
+    testStudent1: {
+        uid: Math.random()
+    }
 }
