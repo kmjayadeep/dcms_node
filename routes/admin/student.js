@@ -5,7 +5,7 @@ var constant = require('../../constant.js');
 
 /**
  * @api {get} /dcms-admin/student get student list
- * @apiGroup Admin
+ * @apiGroup Admin/Student
  *
  *
  * @apiSuccessExample {json} success
@@ -38,7 +38,7 @@ router.get('/', (req, res, next) => {
 /**
  * @api {get} /dcms-admin/student/:id get student details
  * @apiDescription get the student and his registered events, by specifying student id
- * @apiGroup Admin
+ * @apiGroup Admin/Student
  *
  *
  * @apiSuccessExample {json} success
@@ -100,6 +100,39 @@ router.get('/:id', (req, res, next) => {
     }).catch(err => {
         constant.studentNotFound.error = err;
         res.status(400).json(constant.studentNotFound);
+    });
+});
+
+/**
+ * @api {post} /dcms-admin/student/:id edit student
+ * @apiName Edit Student
+ * @apiGroup Admin/Student
+ * 
+ *
+ * @apiParamExample sample request
+{
+    "name": "updated name"
+}
+
+ * @apiSuccessExample {json} edited
+  success
+
+ * @apiUse tokenErrors
+ */
+
+router.post('/:id', (req, res, next) => {
+    models.student.update(
+        req.body, {
+            where: {
+                id: req.params.id
+            }
+        }).then(result => {
+        return res.json(result);
+    }).catch(error => {
+        res.json({
+            code: 0,
+            data: err
+        })
     });
 });
 

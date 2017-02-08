@@ -7,7 +7,8 @@ var should = require('should'),
     constant = require('../constant'),
     config = require('../config')(),
     md5 = require('md5'),
-    models = require('../models');
+    models = require('../models'),
+    Promise = require('bluebird')
 
 var url = config.serverUrl;
 describe('Admin Functions', () => {
@@ -172,7 +173,7 @@ describe('Admin Functions', () => {
                     done();
                 });
         });
-        it('Deletes an event', done=>{
+        it('Deletes an event', done => {
             request(url)
                 .delete('/dcms-admin/event/' + id)
                 .set('x-auth-token', input.token)
@@ -180,9 +181,9 @@ describe('Admin Functions', () => {
                 .end((err, res) => {
                     should.not.exist(err);
                     done();
-                });            
+                });
         });
-        it('Deleting an event with wrong id gives error', done=>{
+        it('Deleting an event with wrong id gives error', done => {
             request(url)
                 .delete('/dcms-admin/event/' + id)
                 .set('x-auth-token', input.token)
@@ -191,8 +192,44 @@ describe('Admin Functions', () => {
                     should.not.exist(err);
                     res.body.should.have.property('deleted').be.eql(false);
                     done();
-                });            
+                });
         })
 
     });
+    describe('Student Functions', () => {
+        it('Gets Student list', done => {
+            request(url)
+                .get('/dcms-admin/student')
+                .set('x-auth-token', input.token)
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.body.should.be.instanceof(Array);
+                    done();
+                });
+        });
+        it('Gets student', ()=> {
+            return models.student.create(input.testStudent1)
+                .then((student) => {
+                    return new Promise((resolve, reject) => {
+                        request(url)
+                            .get('/dcms-admin/student/' + student.id)
+                            .set('x-auth-token', input.token)
+                            .expect('Content-Type', /json/)
+                            .expect(200)
+                            .end((err, res) => {
+                                should.not.exist(err)
+                                res.body.should.have.property('name')
+                                resolve(res)
+                            })
+                    })
+                })
+                .then(() => {
+                    return models.student.destroy({
+                        where: input.testStudent1
+                    })
+                })
+        })
+    })
 });

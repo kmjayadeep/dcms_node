@@ -24,6 +24,8 @@ module.exports = {
     },
     registerStudent:{
         phone: 426351789,        
+    },
+    testStudent1: {
+        uid: Math.random()
     }
-
 }
