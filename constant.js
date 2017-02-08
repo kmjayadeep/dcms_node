@@ -63,4 +63,8 @@ module.exports = {
         code: 11,
         message: "Student could not be found"
     },
+    cantFetchCollege: {
+        code: 11,
+        message: "Could not fetch college list"
+    },
 }

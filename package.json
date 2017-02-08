@@ -28,8 +28,10 @@
     "expect": "^1.20.2",
     "gulp": "^3.9.1",
     "gulp-apidoc": "^0.2.5",
+    "gulp-foreach": "^0.1.0",
     "gulp-mocha": "^3.0.1",
     "gulp-open": "^2.0.0",
+    "gulp-replace": "^0.5.4",
     "should": "^11.2.0",
     "supertest": "^3.0.0"
   }

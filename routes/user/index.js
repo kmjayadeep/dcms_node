@@ -91,21 +91,7 @@ router.post('/login', function(req, res, next) {
     message: "Success"
 }
 
-* @apiErrorExample {json} updation error
-{
-    code: 1,
-    message: "Could not update",
-    data: error
-}
-
-* @apiErrorExample {json} authentication error
-{
-    code: 1,
-    data: {},
-    message: "Authentication Error"
-}
-
-
+ * @apiUse tokenErrors
  */
 router.post('/updateGuntScore', (req, res, next) => {
     debug(req.body);

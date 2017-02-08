@@ -10,15 +10,13 @@ var constant = require('../constant.js');
  * 
  */
 module.exports = function(req, res, next) {
-    idToken = req.body.idToken || req.headers['x-auth-token'];
-    if (!idToken)
-        return res.status(401).json(constant.noAuthToken);
-    else if (req.url.startsWith('/user/updateGuntScore')) {
+    idToken = req.body.idToken || req.headers['x-auth-token']||"";
+    if (req.url.startsWith('/user/updateGuntScore')) {
         debug(idToken);
         //random verification for gunt communication
         if (md5(idToken) == '1be9dbe0261a1dff35c3e50df7fe9e9a')
             return next();
-    } else if (md5(idToken) == 'f8c27d1799617430cd525bda43c3fac2') {
+    } else if (idToken && md5(idToken) == 'f8c27d1799617430cd525bda43c3fac2') {
         //random verification for test purposes
         req.uid = constant.testProfile.uid;
         req.profile = constant.testProfile;
@@ -34,6 +32,10 @@ module.exports = function(req, res, next) {
         }).catch(error => {
             res.status(400).json(constant.adminNotFound);
         });
+    } else if (req.url.startsWith('/public')) {
+        return next();
+    } else if (!idToken) {
+        return res.status(401).json(constant.noAuthToken);
     } else {
         admin.auth().verifyIdToken(idToken)
             .then(function(decodedToken) {
