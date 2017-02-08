@@ -22,5 +22,8 @@ module.exports = {
         name: "Event Name changed",
         description: "Event description changed",
     },
+    registerStudent:{
+        phone: 426351789,        
+    }
 
 }

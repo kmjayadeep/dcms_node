@@ -1,16 +1,17 @@
 var express = require('express');
-var debug = require('debug')('user');
+var debug = require('debug')('student');
 var admin = require("firebase-admin");
 var router = express.Router();
 var models = require("../../models");
 var constant = require("../../constant");
 var Student = models.student;
+var _ = require('underscore');
 router.get('/', function(req, res, next) {
     res.status(401).send('no route');
 });
 
 /**
- * @api {post} /user/login Login a Student
+ * @api {post} /student/login Login a Student
  * @apiName Login
  * @apiGroup Student
  * @apiVersion 1.0.0
@@ -45,7 +46,7 @@ router.get('/', function(req, res, next) {
 {
     code: 1,
     data: {},
-    message: "Could not create user"
+    message: "Could not create student"
 }
 
  */
@@ -79,7 +80,45 @@ router.post('/login', function(req, res, next) {
 });
 
 /**
- * @api {post} /user/updateGuntScore update normalised score from gunt
+ * @api {post} /student/register Register Student
+ * @apiDescription Register student by adding phone number, collegeId and accomodation request
+ * @apiGroup Student
+ * @apiParam {String} phone Phone Number
+ * @apiParam {Enum=['none','male','female']} accomodation=none Whether accomodation is needed
+ * @apiParam {id} collegeId college Id of the related college
+ *
+ * @apiExample request
+ *{
+      "phone":456987132,
+      "collegeId":2
+  }
+ *
+ * @apiSuccessExample success
+ * "registered"
+ * 
+ * @apiErrorExample error
+ * {
+      "code": 13,
+      "message": "Could not register student"
+    }
+ * @apiUse tokenErrors
+ *  
+ */
+router.post('/register', (req, res, next) => {
+    req.body.registered = true;
+    Student.update(_.pick(req.body, 'phone', 'accomodation', 'collegeId', 'registered'), {
+        where: {
+            uid: req.uid
+        }
+    }).then(result => {
+        res.json("Registered");
+    }).catch(error => {
+        res.status(400).json(constant.registerFailed);
+    });
+});
+
+/**
+ * @api {post} /student/updateGuntScore update normalised score from gunt
  * @apiGroup GUNT
  * @apiVersion 1.0.0
  * 

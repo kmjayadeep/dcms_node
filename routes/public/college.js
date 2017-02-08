@@ -19,7 +19,7 @@ var constant = require('../../constant');
  * 
  * @apiErrorExample error
  * {
-        code: 11,
+        code: 12,
         message: "Could not fetch college list"
    }
 		 */

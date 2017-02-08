@@ -6,7 +6,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.use('/dcms-admin', require('./admin'))
-router.use('/user', require('./user'))
+router.use('/student', require('./student'))
 router.use('/public', require('./public'))
 
 module.exports = router;
