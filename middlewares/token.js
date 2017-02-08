@@ -11,7 +11,7 @@ var constant = require('../constant.js');
  */
 module.exports = function(req, res, next) {
     idToken = req.body.idToken || req.headers['x-auth-token']||"";
-    if (req.url.startsWith('/user/updateGuntScore')) {
+    if (req.url.startsWith('/student/updateGuntScore')) {
         debug(idToken);
         //random verification for gunt communication
         if (md5(idToken) == '1be9dbe0261a1dff35c3e50df7fe9e9a')
@@ -43,7 +43,7 @@ module.exports = function(req, res, next) {
                 debug(req.uid);
                 req.profile = decodedToken;
                 debug(req.profile);
-                if (req.url.startsWith('/user')) {
+                if (req.url.startsWith('/student')) {
                     //TODO check if suspended
                     next();
                 } else if (req.url.startsWith('/dcms-admin/auth')) {
