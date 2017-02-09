@@ -15,17 +15,21 @@ module.exports = function(sequelize, DataTypes) {
         },
         image: {
             type: DataTypes.STRING
-                //TODO Add default Value for event image
-        },
-        maxParticipants: {
-            type: DataTypes.INTEGER,
-            defaultValue: 0 //0 denotes unlimited
         },
         //valid only if it is group event
-        maxGroups: {
-            type: DataTypes.INTEGER,
-            defaultValue: 0 //unlimited
+        maxPerGroup: {
+            type: DataTypes.INTEGER
         },
+        category: {
+            type: DataTypes.ENUM('AR', 'EE', 'EC', 'ME', 'CS', 'ROBO', 'GEN', 'ONLINE'),
+            allowNull:false
+        },
+        contactName1: DataTypes.STRING,
+        contactPhone1: DataTypes.STRING,
+        contactEmail1: DataTypes.STRING,
+        contactName2: DataTypes.STRING,
+        contactPhone2: DataTypes.STRING,
+        contactEmail2: DataTypes.STRING
     }, {
         classMethods: {
             associate: function(models) {
