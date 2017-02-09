@@ -87,4 +87,57 @@ describe('Student Functions', () => {
                 });
         });
     });
+    describe('Event Functions', () => {
+        var id = 0;
+        it('Puts an event for testing', done => {
+            request(url)
+                .put('/dcms-admin/event')
+                .set('x-auth-token', input.token)
+                .send(input.testEvent)
+                .expect(200)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.body.should.have.property('id');
+                    res.body.should.have.property('name').be.eql(input.testEvent.name);
+                    res.body.should.have.property('description').be.eql(input.testEvent.description);
+                    id = res.body.id;
+                    done();
+                });
+        });
+        it('Registers student to event', done => {
+            request(url)
+                .put('/student/event/' + id)
+                .set('x-auth-token', input.token)
+                .expect(200)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.body.should.have.property('studentId');
+                    res.body.should.have.property('eventId');
+                    done();
+                });
+        });
+        it('Errors when register invalid event', done => {
+            request(url)
+                .put('/student/event/' + id)
+                .set('x-auth-token', input.token)
+                .expect(400)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.body.should.containEql(constant.noEventError);
+                    done();
+                });
+        });
+
+        it('Deletes event after test', done => {
+            request(url)
+                .delete('/dcms-admin/event/' + id)
+                .set('x-auth-token', input.token)
+                .expect(200)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    done();
+                });
+        });
+
+    });
 });

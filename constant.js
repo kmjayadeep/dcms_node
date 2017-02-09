@@ -75,6 +75,10 @@ module.exports = {
         code: 14,
         message: "Could not find event to register"
     },
+    noStudentFound: {
+        code: 15,
+        message: "Could not find student"
+    }
 
 
 }
