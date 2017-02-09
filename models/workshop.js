@@ -1,13 +1,11 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-    var Events = sequelize.define("event", {
+    var Workshops = sequelize.define("workshop", {
         name: DataTypes.STRING,
         description: DataTypes.TEXT,
-        format: DataTypes.TEXT, //event format
-        prize1: DataTypes.INTEGER, //first prize
-        prize2: DataTypes.INTEGER, //second
-        prize3: DataTypes.INTEGER, //third
+        format: DataTypes.TEXT, //workshop format
+        documentation: DataTypes.TEXT, //for future use
         //group event or not
         group: {
             type: DataTypes.BOOLEAN,
@@ -19,10 +17,6 @@ module.exports = function(sequelize, DataTypes) {
         //valid only if it is group event
         maxPerGroup: {
             type: DataTypes.INTEGER
-        },
-        category: {
-            type: DataTypes.ENUM('AR', 'EE', 'EC', 'ME', 'CS', 'ROBO', 'GEN', 'ONLINE'),
-            allowNull: false
         },
         regFee: {
             type: DataTypes.INTEGER,
@@ -38,11 +32,12 @@ module.exports = function(sequelize, DataTypes) {
     }, {
         classMethods: {
             associate: function(models) {
-
+                Workshops.belongsTo(models.admin)
+                models.admin.hasMany(Workshops)
             }
         }
 
     });
 
-    return Events;
+    return Workshops;
 };

@@ -13,10 +13,10 @@ module.exports = {
         name: "Event Name",
         description: "Event description",
         format: "Event format",
-        problemStatement: "Event problem Statement",
         prize1: 1,
         prize2: 2,
-        prize3: 3
+        prize3: 3,
+        category:'EC'
     },
     testEvent2: {
         name: "Event Name changed",
