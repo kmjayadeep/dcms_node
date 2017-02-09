@@ -13,9 +13,9 @@ gulp.task('doc', function(done) {
         src: 'routes/',
         dest: 'apidoc/',
     }, done);
-    gulp.src('apidoc/index.html').pipe(open({
-        app: 'google-chrome-stable'
-    }));
+    // gulp.src('apidoc/index.html').pipe(open({
+    //     app: 'google-chrome-stable'
+    // }));
 });
 
 gulp.task('test', done => {
