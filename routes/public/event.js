@@ -98,19 +98,4 @@ router.get('/:id', (req, res, next) => {
     })
 });
 
-router.get('/category/:cat', (req, res, next) => {
-    models.event.findAll({
-        where: {
-            category: req.params.cat
-        }
-    }).then((events) => {
-        res.json(events)
-    }).catch(error => {
-        constant.cantfetchEvent.data = error;
-        res.status(400)
-            .json(constant.cantfetchEvent)
-    })
-});
-
-
 module.exports = router;

@@ -1,6 +1,5 @@
 var express = require('express');
 var debug = require('debug')('student');
-var admin = require("firebase-admin");
 var router = express.Router();
 var models = require("../../models");
 var constant = require("../../constant");
@@ -9,6 +8,8 @@ var _ = require('underscore');
 router.get('/', function(req, res, next) {
     res.status(401).send('no route');
 });
+
+router.use('/event/', require('./event.js'));
 
 /**
  * @api {post} /student/login Login a Student

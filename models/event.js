@@ -31,6 +31,10 @@ module.exports = function(sequelize, DataTypes) {
         },
         day: DataTypes.INTEGER, //day 1 2 3
         time: DataTypes.STRING,
+        isWorkshop:{
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
         contactName1: DataTypes.STRING,
         contactPhone1: DataTypes.STRING,
         contactEmail1: DataTypes.STRING,
