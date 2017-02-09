@@ -1,26 +1,13 @@
 "use strict";
 
 module.exports = function(sequelize, DataTypes) {
-    var Workshops = sequelize.define("workshop", {
+    var Projects = sequelize.define("project", {
         name: DataTypes.STRING,
         description: DataTypes.TEXT,
-        format: DataTypes.TEXT, //workshop format
+        documentation: DataTypes.TEXT, //for future use
         //group event or not
-        group: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false
-        },
         image: {
             type: DataTypes.STRING
-        },
-        //valid only if it is group event
-        maxPerGroup: {
-            type: DataTypes.INTEGER
-        },
-        regFee: {
-            type: DataTypes.INTEGER,
-            defaultValue: 0
-            //For group event, fee is per group
         },
         contactName1: DataTypes.STRING,
         contactPhone1: DataTypes.STRING,
@@ -31,12 +18,11 @@ module.exports = function(sequelize, DataTypes) {
     }, {
         classMethods: {
             associate: function(models) {
-                Workshops.belongsTo(models.admin)
-                models.admin.hasMany(Workshops)
+                Projects.belongsTo(models.admin)
+                models.admin.hasMany(Projects)
             }
         }
-
     });
 
-    return Workshops;
+    return Projects;
 };

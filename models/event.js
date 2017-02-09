@@ -27,7 +27,7 @@ module.exports = function(sequelize, DataTypes) {
         regFee: {
             type: DataTypes.INTEGER,
             defaultValue: 0
-            //For group event, fee is per group
+                //For group event, fee is per group
         },
         contactName1: DataTypes.STRING,
         contactPhone1: DataTypes.STRING,
@@ -38,11 +38,10 @@ module.exports = function(sequelize, DataTypes) {
     }, {
         classMethods: {
             associate: function(models) {
-
+                Events.belongsTo(models.admin)
+                models.admin.hasMany(Events)
             }
         }
-
     });
-
     return Events;
 };

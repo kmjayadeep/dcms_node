@@ -214,9 +214,8 @@ router.get('/:id', (req, res, next) => {
         event = ev.toJSON()
         return models.admin.findAll()
     }).then(admins => {
-        let adminIds = event.admins.map(admin => admin.id)
         event.allAdmins = admins.filter(admin => {
-            return !adminIds.includes(admin.id)
+            return admin.id!=event.adminId
         })
         res.json(event)
     }).catch(error => {
@@ -301,47 +300,5 @@ router.post('/:id', (req, res, next) => {
     });
 });
 
-/**
- * @api {put} /dcms-admin/event/admin Add admin to events
- * @apiName adminAdd
- * @apiGroup Admin/Event
- * 
- *
- * @apiParamExample sample request
-{
-  "eventId" : 1,
-  "adminIds" : [1]
-}
 
- * @apiSuccessExample {json} edited
-  success
-
- * @apiUse tokenErrors
- */
-router.put('/admin/:eventId', (req, res, next) => {
-    console.log(req.body)
-    var eventAdminArray = req.body.adminIds.map(adminId => {
-        return {
-            eventId: req.params.eventId,
-            adminId: adminId
-        }
-    });
-    debug(eventAdminArray)
-    models.eventAdmin.destroy({
-        where: {
-            eventId: req.params.eventId
-        }
-    }).then(() => {
-        models.eventAdmin.bulkCreate(eventAdminArray);
-    }).then((data) => {
-        res.json(1);
-    }).catch(error => {
-        debug(error)
-        res.status(400).json({
-            code: 7,
-            data: error,
-            message: "Could not add event admins"
-        })
-    });
-});
 module.exports = router;
