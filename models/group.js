@@ -5,12 +5,11 @@
 module.exports = function(sequelize, DataTypes) {
     var Group = sequelize.define("group", {
         report: DataTypes.DATE,
-        name: DataTypes.STRING
     }, {
         classMethods: {
             associate: function(models) {
-                models.group.belongsTo(models.event)
-                models.group.belongsTo(models.college)
+                Group.belongsTo(models.eventStudent);
+                models.eventStudent.hasOne(Group);
             }
         }
 
