@@ -1,7 +1,7 @@
-var router=require('express').Router();
-var debug=require('debug')('public');
-var models=require('../../models');
-var constant=require('../../constant');
+var router = require('express').Router();
+var debug = require('debug')('public');
+var models = require('../../models');
+var constant = require('../../constant');
 /**
  * @api {get} /public/event/ get event list
  * @apiName Get Events
@@ -97,5 +97,20 @@ router.get('/:id', (req, res, next) => {
             .json(constant.cantfetchEvent)
     })
 });
+
+router.get('/category/:cat', (req, res, next) => {
+    models.event.findAll({
+        where: {
+            category: req.params.cat
+        }
+    }).then((events) => {
+        res.json(events)
+    }).catch(error => {
+        constant.cantfetchEvent.data = error;
+        res.status(400)
+            .json(constant.cantfetchEvent)
+    })
+});
+
 
 module.exports = router;

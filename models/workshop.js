@@ -20,7 +20,11 @@ module.exports = function(sequelize, DataTypes) {
         regFee: {
             type: DataTypes.INTEGER,
             defaultValue: 0
-            //For group event, fee is per group
+                //For group event, fee is per group
+        },
+        schedule: {
+            type: DataTypes.DATE,
+            allowNull: false
         },
         contactName1: DataTypes.STRING,
         contactPhone1: DataTypes.STRING,

@@ -212,11 +212,6 @@ router.get('/:id', (req, res, next) => {
         }]
     }).then((ev) => {
         event = ev.toJSON()
-        return models.admin.findAll()
-    }).then(admins => {
-        event.allAdmins = admins.filter(admin => {
-            return admin.id!=event.adminId
-        })
         res.json(event)
     }).catch(error => {
         constant.cantfetchEvent.data = error;

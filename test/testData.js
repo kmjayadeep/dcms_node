@@ -16,11 +16,12 @@ module.exports = {
         prize1: 1,
         prize2: 2,
         prize3: 3,
-        category:'EC'
+        category:'EC',
+        schedule:1111
     },
     testEvent2: {
         name: "Event Name changed",
-        description: "Event description changed",
+        description: "Event description changed"
     },
     registerStudent:{
         phone: 426351789,        

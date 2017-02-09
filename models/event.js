@@ -29,6 +29,10 @@ module.exports = function(sequelize, DataTypes) {
             defaultValue: 0
                 //For group event, fee is per group
         },
+        schedule: {
+            type: DataTypes.DATE,
+            allowNull: false
+        },
         contactName1: DataTypes.STRING,
         contactPhone1: DataTypes.STRING,
         contactEmail1: DataTypes.STRING,

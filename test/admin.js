@@ -158,7 +158,6 @@ describe('Admin Functions', () => {
                     should.not.exist(err);
                     debug(res.body);
                     res.body.should.have.property('admin');
-                    res.body.should.have.property('allAdmins');
                     done();
                 });
         });
