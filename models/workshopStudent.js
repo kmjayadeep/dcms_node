@@ -3,7 +3,7 @@
 //id is the primary key and it is used as drishti/dhwani id to create QR codes
 
 module.exports = function(sequelize, DataTypes) {
-    var EventStudent = sequelize.define("event_student", {
+    var WorkshopStudent = sequelize.define("workshop_student", {
         report: DataTypes.DATE,
         payment: {
             //total amount paid
@@ -18,16 +18,16 @@ module.exports = function(sequelize, DataTypes) {
     }, {
         classMethods: {
             associate: function(models) {
-                models.event.belongsToMany(models.student, {
-                    through: EventStudent
+                models.workshop.belongsToMany(models.student, {
+                    through: WorkshopStudent
                 })
-                models.student.belongsToMany(models.event, {
-                    through: EventStudent
+                models.student.belongsToMany(models.workshop, {
+                    through: WorkshopStudent
                 })
             }
         }
 
     });
 
-    return EventStudent;
+    return WorkshopStudent;
 };
