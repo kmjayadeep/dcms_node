@@ -1,12 +1,12 @@
 var router = require('express').Router();
 var models = require('../../models');
-var debug = require('debug')('college');
+var debug = require('debug')('public');
 var constant = require('../../constant');
 /**
  * @api {get} /public/college get all colleges
  *
  * @apiDescription get the models of all colleges from the database, used in lists where colelge selection is to be done
- * @apiGroup college
+ * @apiGroup Public/College
  * @apiSuccessExample success
  * [
  *   {
