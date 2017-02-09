@@ -22,7 +22,12 @@ module.exports = function(sequelize, DataTypes) {
         },
         category: {
             type: DataTypes.ENUM('AR', 'EE', 'EC', 'ME', 'CS', 'ROBO', 'GEN', 'ONLINE'),
-            allowNull:false
+            allowNull: false
+        },
+        regFee: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0
+            //For group event, fee is per group
         },
         contactName1: DataTypes.STRING,
         contactPhone1: DataTypes.STRING,
