@@ -104,6 +104,16 @@ describe('Student Functions', () => {
                     done();
                 });
         });
+        it('Gets if event is not registered', done => {
+            request(url)
+                .get('/student/event/' + id)
+                .set('x-auth-token', input.token)
+                .expect(200)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    done();
+                });
+        });
         it('Registers student to event', done => {
             request(url)
                 .put('/student/event/' + id)
@@ -118,7 +128,7 @@ describe('Student Functions', () => {
         });
         it('Errors when register invalid event', done => {
             request(url)
-                .put('/student/event/' + id)
+                .put('/student/event/' + -1)
                 .set('x-auth-token', input.token)
                 .expect(400)
                 .end((err, res) => {
@@ -127,7 +137,16 @@ describe('Student Functions', () => {
                     done();
                 });
         });
-
+        it('Gets if event is registered', done => {
+            request(url)
+                .get('/student/event/' + id)
+                .set('x-auth-token', input.token)
+                .expect(200)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    done();
+                });
+        });
         it('Deletes event after test', done => {
             request(url)
                 .delete('/dcms-admin/event/' + id)

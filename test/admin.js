@@ -156,7 +156,6 @@ describe('Admin Functions', () => {
                 .expect(200)
                 .end((err, res) => {
                     should.not.exist(err);
-                    debug(res.body);
                     res.body.should.have.property('admin');
                     done();
                 });
