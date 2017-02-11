@@ -7,10 +7,7 @@ module.exports = function(sequelize, DataTypes) {
     }, {
         classMethods: {
             associate: function(models) {
-                models.group.belongsToMany(models.student, {
-                    through: GroupStudent
-                })
-                models.student.belongsToMany(models.group, {
+                models.eventStudent.belongsToMany(models.student, {
                     through: GroupStudent
                 })
             }

@@ -5,11 +5,6 @@
 module.exports = function(sequelize, DataTypes) {
     var EventStudent = sequelize.define("event_student", {
         report: DataTypes.DATE,
-        payment: {
-            //total amount paid
-            type: DataTypes.INTEGER,
-            defaultValue: 0
-        },
         paid: {
             //payment complete or not
             type: DataTypes.BOOLEAN,

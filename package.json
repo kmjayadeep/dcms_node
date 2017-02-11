@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon ./bin/www",
-    "test":"mocha"
+    "test": "mocha"
   },
   "dependencies": {
     "bluebird": "^3.4.7",
@@ -33,6 +33,7 @@
     "gulp-mocha": "^3.0.1",
     "gulp-open": "^2.0.0",
     "gulp-replace": "^0.5.4",
+    "gulp-replace-task": "^0.11.0",
     "should": "^11.2.0",
     "supertest": "^3.0.0"
   }

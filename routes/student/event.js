@@ -5,7 +5,7 @@ var constant = require("../../constant");
 
 
 /**
- * @api {put} /student/event/:id event Register
+ * @api {put} /student/event/:id Event Register
  * @apiDescription register a student in an event :id is event id, student id is found from idToken
  * @apiGroup Student
  * @apiVersion 0.1.0
@@ -61,21 +61,22 @@ router.put('/:id', (req, res, next) => {
  * @apiParamExample {json} request
  * {}
  *
- * @apiSuccessExample {json} success
- * {
-  "payment": 0,
-  "paid": false,
-  "eventId": "1",
-  "studentId": 1,
-  "updatedAt": "2017-02-09T18:27:12.000Z",
-  "createdAt": "2017-02-09T18:27:12.000Z"
-}
- *
- * @apiErrorExample no event found
+ * @apiSuccessExample {json} not registered
+ * { 
+ *   isRegistered: false
+ * }
+ * @apiSuccessExample {json} registered
 {
-    code: 14,
-    message: "Could not find event to register"
+    report: null,
+    payment: 0,
+    paid: false,
+    createdAt: '2017-02-10T09:18:37.000Z',
+    updatedAt: '2017-02-10T09:18:37.000Z',
+    eventId: 57,
+    studentId: 2,
+    isRegistered: true
 }
+ * 
  * @apiUse tokenErrors
 */
 router.get('/:id', (req, res, next) => {

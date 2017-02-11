@@ -16,7 +16,6 @@ module.exports = function(sequelize, DataTypes) {
                 models.result.belongsTo(models.event)
                 models.result.belongsTo(models.college)
                 models.result.belongsTo(models.student) //for individual event
-                models.result.belongsTo(models.group) //for group event
             }
         }
 
