@@ -4,6 +4,11 @@
 
 module.exports = function(sequelize, DataTypes) {
     var EventStudent = sequelize.define("event_student", {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true
+        },
         report: DataTypes.DATE,
         paid: {
             //payment complete or not

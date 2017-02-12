@@ -27,11 +27,7 @@ var constant = require('../../constant');
 }
 
  * @apiErrorExample not found
-{
-  code: 15,
-  message: "Could not find student"
-}
-#constant.noStudentFound#
+{"code":15,"message":"Could not find student"}
 */
 router.get('/:uid', (req, res, next) => {
     models.student.findOne({
@@ -40,7 +36,7 @@ router.get('/:uid', (req, res, next) => {
         }
     }).then(result => {
         if (!result)
-            throw new Promise((res, rej) => rej("invalid uid"));
+            return new Promise((res, rej) => rej("invalid uid"));
         return res.json(result);
     }).catch(error => {
         constant.noStudentFound.data = error;
