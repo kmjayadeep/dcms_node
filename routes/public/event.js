@@ -47,9 +47,10 @@ var constant = require('../../constant');
 ]
  */
 router.get('/', (req, res, next) => {
-    debug(req.query)
     models.event.findAll({
-        where: req.query
+        where: {
+            isWorkshop: false
+        }
     }).then((list) => {
         res.json(list);
     }).catch(error => {

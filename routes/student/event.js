@@ -60,10 +60,11 @@ router.put('/:id', (req, res, next) => {
             .spread((student, event, eventStudent) => {
                 eventStudentSave = eventStudent;
                 if (event.group) {
-                    if (!req.body.group)
-                        return models.eventStudent.destroy({
-                            where: eventStudent.toJSON()
-                        });
+                    if (!req.body.group) {
+                        return new Promise((res, rej) => rej({
+                            msg: "No group tag found"
+                        }))
+                    }
                     return models.groupStudent.bulkCreate(
                         req.body.group.map(x => {
                             return {
