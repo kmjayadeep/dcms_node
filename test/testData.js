@@ -16,17 +16,32 @@ module.exports = {
         prize1: 1,
         prize2: 2,
         prize3: 3,
-        category:'EC',
-        schedule:1111
+        category: 'EC',
+        schedule: 1111,
+        group: false
+    },
+    testGroupEvent: {
+        name: "Group Event Name",
+        description: "Group Event description",
+        format: "Group Event format",
+        prize1: 1,
+        prize2: 2,
+        prize3: 3,
+        category: 'CS',
+        schedule: 1111,
+        group: true
     },
     testEvent2: {
         name: "Event Name changed",
         description: "Event description changed"
     },
-    registerStudent:{
-        phone: 426351789,        
+    registerStudent: {
+        phone: 426351789,
     },
     testStudent1: {
         uid: Math.random()
+    },
+    group: {
+        group: [100000,100001, 100002, 100003]
     }
 }

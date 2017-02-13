@@ -10,6 +10,7 @@ var should = require('should'),
     md5 = require('md5');
 
 var url = config.serverUrl;
+var studentId = 0;
 describe('Student Functions', () => {
     describe('Login', () => {
         it('Logs in as student', (done) => {
@@ -23,6 +24,8 @@ describe('Student Functions', () => {
                 .expect(200)
                 .end((err, res) => {
                     should.not.exist(err);
+                    res.body.should.have.property('id');
+                    studentId = res.body.id;
                     res.body.should.have.property('name').be.not.eql(null);
                     res.body.should.have.property('picture').be.not.eql(null);
                     done();
@@ -89,7 +92,26 @@ describe('Student Functions', () => {
     });
     describe('Event Functions', () => {
         var id = 0;
-        it('Puts an event for testing', done => {
+        var groupId = 0;
+        // create four users for testing
+        models.student.create({
+            id: 100000,
+            uid: "100000"
+        });
+        models.student.create({
+            id: 100001,
+            uid: "100001"
+        });
+        models.student.create({
+            id: 100002,
+            uid: "100002"
+        });
+        models.student.create({
+            id: 100003,
+            uid: "100003"
+        });
+
+        it('Puts a single event for testing', done => {
             request(url)
                 .put('/dcms-admin/event')
                 .set('x-auth-token', input.token)
@@ -100,7 +122,24 @@ describe('Student Functions', () => {
                     res.body.should.have.property('id');
                     res.body.should.have.property('name').be.eql(input.testEvent.name);
                     res.body.should.have.property('description').be.eql(input.testEvent.description);
+                    res.body.should.have.property('group').be.eql(false);
                     id = res.body.id;
+                    done();
+                });
+        });
+        it('Puts a group event for testing', done => {
+            request(url)
+                .put('/dcms-admin/event')
+                .set('x-auth-token', input.token)
+                .send(input.testGroupEvent)
+                .expect(200)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.body.should.have.property('id');
+                    res.body.should.have.property('name').be.eql(input.testGroupEvent.name);
+                    res.body.should.have.property('description').be.eql(input.testGroupEvent.description);
+                    res.body.should.have.property('group').be.eql(true);
+                    groupId = res.body.id;
                     done();
                 });
         });
@@ -114,15 +153,38 @@ describe('Student Functions', () => {
                     done();
                 });
         });
-        it('Registers student to event', done => {
+        it('Registers student to single event', done => {
             request(url)
                 .put('/student/event/' + id)
                 .set('x-auth-token', input.token)
                 .expect(200)
                 .end((err, res) => {
                     should.not.exist(err);
-                    res.body.should.have.property('studentId');
-                    res.body.should.have.property('eventId');
+                    res.body.should.be.eql("success");
+                    done();
+                });
+        });
+        it('Errors on Registers student to group event without group attribute', done => {
+            request(url)
+                .put('/student/event/' + groupId)
+                .set('x-auth-token', input.token)
+                .expect(400)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.body.should.containEql(constant.noEventError);
+                    done();
+                });
+        });
+        it('Registers student to group event', done => {
+            input.group.group.push(studentId);
+            request(url)
+                .put('/student/event/' + groupId)
+                .set('x-auth-token', input.token)
+                .send(input.group)
+                .expect(200)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.body.should.be.eql("success");
                     done();
                 });
         });
@@ -137,13 +199,36 @@ describe('Student Functions', () => {
                     done();
                 });
         });
-        it('Gets if event is registered', done => {
+        it('Gets if single event is registered', done => {
             request(url)
                 .get('/student/event/' + id)
                 .set('x-auth-token', input.token)
                 .expect(200)
                 .end((err, res) => {
                     should.not.exist(err);
+                    res.body.should.have.property('isRegistered').be.eql(true);
+                    done();
+                });
+        });
+        it('Gets if group event is registered', done => {
+            request(url)
+                .get('/student/event/' + groupId)
+                .set('x-auth-token', input.token)
+                .expect(200)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.body.should.have.property('isRegistered').be.eql(true);
+                    done();
+                });
+        });
+        it('Gets empty if wrong event given to check', done => {
+            request(url)
+                .get('/student/event/' + -1)
+                .set('x-auth-token', input.token)
+                .expect(200)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.body.should.be.eql({});
                     done();
                 });
         });
@@ -156,6 +241,36 @@ describe('Student Functions', () => {
                     should.not.exist(err);
                     done();
                 });
+        });
+        it('Deletes group event after test', done => {
+            request(url)
+                .delete('/dcms-admin/event/' + groupId)
+                .set('x-auth-token', input.token)
+                .expect(200)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    done();
+                });
+        });
+        models.student.destroy({
+            where: {
+                id: 100000
+            }
+        });
+        models.student.destroy({
+            where: {
+                id: 100001
+            }
+        });
+        models.student.destroy({
+            where: {
+                id: 100002
+            }
+        });
+        models.student.destroy({
+            where: {
+                id: 100003
+            }
         });
 
     });

@@ -36,20 +36,17 @@ router.use('/event/', require('./event.js'));
   "collegeId": null
 }
  *
+
+ * @apiErrorExample {json} creation error
+{"code":3,
+"message":"Could not create user"}
+
  * @apiErrorExample {json} authentication error
 {
     code: 1,
     data: {},
     message: "Authentication Error"
 }
-
- * @apiErrorExample {json} creation error
-{
-    code: 1,
-    data: {},
-    message: "Could not create student"
-}
-
  */
 router.post('/login', function(req, res, next) {
     debug(req.profile);
