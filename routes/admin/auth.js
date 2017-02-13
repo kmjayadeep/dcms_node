@@ -14,16 +14,10 @@ var models = require("../../models");
  * @apiParam {String} idToken Id token from login.
  *
  * @apiSuccessExample {json} beforeRegister
- {
-  "student": {
-    "accomodation": "none",
-    "status": "pending",
-    "id": 1,
-    "uid": "bJ1rrx0lpVSbUPs1WphU0BHfItD2",
-    "updatedAt": "2017-02-04T09:21:52.000Z",
-    "createdAt": "2017-02-04T09:21:52.000Z"
-  },
-  "created": true
+{
+  "name": "John Doe",
+  "picture": "https://lh6.googleusercontent.com/-LdIUNFJBriQ/AAAAAAAAAAI/AAAAAAAAAvI/HUwlqct9yJY/photo.jpg",
+  "status": 10
 }
  *
  * @apiErrorExample {json} error

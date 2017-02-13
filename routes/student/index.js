@@ -55,6 +55,7 @@ router.post('/login', function(req, res, next) {
     var student = req.profile;
     student.uid = req.uid;
     student.name = req.profile.name;
+    student.email = req.profile.email;
     if (req.profile.picture)
         student.picture = req.profile.picture;
     delete student.id;

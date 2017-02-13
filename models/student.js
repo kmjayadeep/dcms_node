@@ -12,7 +12,12 @@ module.exports = function(sequelize, DataTypes) {
             unique: true
         },
         phone: {
-            type: DataTypes.STRING
+            type: DataTypes.STRING,
+            unique: true
+        },
+        email: {
+            type: DataTypes.STRING,
+            unique: true
         },
         accomodation: {
             type: DataTypes.ENUM,

@@ -47,11 +47,7 @@ var constant = require('../../constant');
 ]
  */
 router.get('/', (req, res, next) => {
-    models.event.findAll({
-        where: {
-            isWorkshop: false
-        }
-    }).then((list) => {
+    models.event.findAll({}).then((list) => {
         res.json(list);
     }).catch(error => {
         constant.cantfetchEvent.data = error;

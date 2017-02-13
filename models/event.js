@@ -14,7 +14,8 @@ module.exports = function(sequelize, DataTypes) {
             defaultValue: false
         },
         image: {
-            type: DataTypes.STRING
+            type: DataTypes.STRING,
+            allowNull: false
         },
         //valid only if it is group event
         maxPerGroup: {
@@ -27,7 +28,14 @@ module.exports = function(sequelize, DataTypes) {
         regFee: {
             type: DataTypes.INTEGER,
             defaultValue: 0
-                //For group event, fee is per group
+            //For group event, fee is per group
+        },
+        status: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0
+            //0 registration open
+            //1 registration closed
+            //2 event cancelled
         },
         day: DataTypes.INTEGER, //day 1 2 3
         time: DataTypes.STRING,
