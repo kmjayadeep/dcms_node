@@ -19,7 +19,8 @@ module.exports = function(sequelize, DataTypes) {
         },
         //valid only if it is group event
         maxPerGroup: {
-            type: DataTypes.INTEGER
+            type: DataTypes.INTEGER,
+            defaultValue: 0
         },
         category: {
             type: DataTypes.ENUM('AR', 'EE', 'EC', 'ME', 'CS', 'ROBO', 'GEN', 'ONLINE'),
@@ -31,8 +32,7 @@ module.exports = function(sequelize, DataTypes) {
             //For group event, fee is per group
         },
         status: {
-            type: DataTypes.INTEGER,
-            defaultValue: 0
+            type: DataTypes.INTEGER
             //0 registration open
             //1 registration closed
             //2 event cancelled

@@ -18,7 +18,8 @@ module.exports = {
         prize3: 3,
         category: 'EC',
         schedule: 1111,
-        group: false
+        group: false,
+        image:'https://firebasestorage.googleapis.com/v0/b/drishti-bd782.appspot.com/o/images%2F1486499663_icons_user.png?alt=media&token=3af2649d-cdfb-4a4d-93df-64dfb5285593'
     },
     testGroupEvent: {
         name: "Group Event Name",
@@ -29,7 +30,8 @@ module.exports = {
         prize3: 3,
         category: 'CS',
         schedule: 1111,
-        group: true
+        group: true,
+        image:'https://firebasestorage.googleapis.com/v0/b/drishti-bd782.appspot.com/o/images%2F1486499663_icons_user.png?alt=media&token=3af2649d-cdfb-4a4d-93df-64dfb5285593'
     },
     testEvent2: {
         name: "Event Name changed",
