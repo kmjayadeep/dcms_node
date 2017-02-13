@@ -78,7 +78,9 @@ module.exports = {
     noStudentFound: {
         code: 15,
         message: "Could not find student"
+    },
+    exceptionThrown: {
+        code: 16,
+        message: "Exception thrown"
     }
-
-
 }

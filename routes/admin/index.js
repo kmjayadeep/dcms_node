@@ -8,6 +8,7 @@ var superAdminStatus = 10;
 router.use('/auth', require('./auth'));
 router.use('/event', require('./event'));
 router.use('/student', require('./student'));
+router.use('/volunteer', require('./volunteer'));
 
 /**
  * @apiDefine optional
@@ -18,31 +19,6 @@ router.use('/student', require('./student'));
  * @apiParam {String} [email] User email
  * @apiParam {String} [phone] Phone Number
  * @apiParam {Integer} [status] User Status
- */
-
-/**
- * @apiDefine token
- * @apiHeader {String} x-auth-token idToken from Login
- * 
- *  * @apiErrorExample {json} invalid user error
-{
-  "code": 1,
-  "data": {
-    "msg": "Not Verified"
-  },
-  "message": "Authentication Error"
-}
-
- * @apiErrorExample {json} no token error
-{
-  "code": 1,
-  "data": {
-    "msg": "No authentication token"
-  },
-  "message": "Authentication Error"
-}
-
- * 
  */
 
 /**
@@ -61,18 +37,19 @@ router.use('/student', require('./student'));
 [
   {
     "id": 1,
-    "name": "nisham mohammed",
-    "uid": "bJ1rrx0lpVSbUPs1WphU0BHfItD2",
-    "email": "mnishamk1995@gmail.com",
+    "name": "John Doe",
+    "uid": "cJ2crx0lpVSbvPs1VbhU0BHgItE2",
+    "email": "johndoe@gmail.com",
     "phone": null,
     "picture": "https://lh6.googleusercontent.com/-LdIUNFJBriQ/AAAAAAAAAAI/AAAAAAAAAvI/HUwlqct9yJY/photo.jpg",
-    "status": 1,
-    "createdAt": "2017-02-04T14:02:17.000Z",
-    "updatedAt": "2017-02-04T14:02:17.000Z"
+    "status": 10,
+    "eventMail": null,
+    "createdAt": "2017-02-12T08:22:13.000Z",
+    "updatedAt": "2017-02-12T14:01:35.000Z"
   }
 ]
 
- * @apiUse token
+ * @apiUse tokenErrors
  */
 router.get('/', (req, res, next) => {
     debug(req.query)
@@ -141,7 +118,7 @@ router.get('/', (req, res, next) => {
     "updatedAt": "2017-02-04T14:02:17.000Z"
   }
 
- * @apiUse token
+ * @apiUse tokenErrors
  */
 router.get('/:id', (req, res, next) => {
     debug(req.params.id)
