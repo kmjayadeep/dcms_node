@@ -7,6 +7,7 @@ constant = require('../../constant');
 var superAdminStatus = 10;
 router.use('/auth', require('./auth'));
 router.use('/event', require('./event'));
+router.use('/workshop', require('./workshop'));
 router.use('/student', require('./student'));
 router.use('/volunteer', require('./volunteer'));
 

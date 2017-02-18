@@ -4,33 +4,9 @@ var models = require('../../models');
 var constant = require('../../constant');
 
 /**
- * @apiDefine tokenErrors
- * @apiHeader {String} x-auth-token idToken from Login
- * 
- *  * @apiErrorExample {json} invalid user error
-{
-  "code": 1,
-  "data": {
-    "msg": "Not Verified"
-  },
-  "message": "Authentication Error"
-}
-
- * @apiErrorExample {json} no token error
-{
-  "code": 1,
-  "data": {
-    "msg": "No authentication token"
-  },
-  "message": "Authentication Error"
-}
-
- * 
- */
-/**
  * @api {put} /dcms-admin/workshop/ add workshop
- * @apiName Put Event
- * @apiGroup Admin/Event
+ * @apiName Put Workshop
+ * @apiGroup Admin/workshop
  *
  *
  * @apiParam {Integer} id column Id
@@ -68,6 +44,7 @@ var constant = require('../../constant');
 
  */
 router.put('/', function(req, res, next) {
+    req.body.isWorkshop = true;
     var event = models.event.create(req.body)
         .then(event => {
             if (event)
@@ -80,9 +57,9 @@ router.put('/', function(req, res, next) {
 });
 
 /**
- * @api {get} /dcms-admin/event/ get event list
- * @apiName Get Events
- * @apiGroup Admin/Event
+ * @api {get} /dcms-admin/workshop/ get event list
+ * @apiName Get Workshop
+ * @apiGroup Admin/workshop
  *
  *
  * @apiParam {Integer} [id] Column Id
@@ -127,7 +104,7 @@ router.put('/', function(req, res, next) {
 router.get('/', (req, res, next) => {
     models.event.findAll({
         where: {
-          isWorkshop: false          
+            isWorkshop: true
         }
     }).then((list) => {
         res.json(list);
@@ -138,9 +115,9 @@ router.get('/', (req, res, next) => {
     })
 });
 /**
- * @api {get} /dcms-admin/event/:id get event
- * @apiName Get Event
- * @apiGroup Admin/Event
+ * @api {get} /dcms-admin/workshop/:id get event
+ * @apiName Get Workshop
+ * @apiGroup Admin/workshop
  *
  *
  * @apiSuccessExample {json} success
@@ -209,9 +186,9 @@ router.get('/:id', (req, res, next) => {
 });
 
 /**
- * @api {delete} /dcms-admin/event/:id delete events
- * @apiName Delete Events
- * @apiGroup Admin/Event
+ * @api {delete} /dcms-admin/workshop/:id delete events
+ * @apiName Delete Workshop
+ * @apiGroup Admin/workshop
  * 
  * @apiSuccessExample {json} deleted
 {
@@ -252,9 +229,9 @@ router.delete('/:id', (req, res, next) => {
 });
 
 /**
- * @api {post} /dcms-admin/event/:id edit events
- * @apiName Edit Events
- * @apiGroup Admin/Event
+ * @api {post} /dcms-admin/workshop/:id edit events
+ * @apiName Edit Workshop
+ * @apiGroup Admin/workshop
  * 
  *
  * @apiParamExample sample request

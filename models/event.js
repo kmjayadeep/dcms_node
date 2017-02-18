@@ -32,7 +32,8 @@ module.exports = function(sequelize, DataTypes) {
             //For group event, fee is per group
         },
         status: {
-            type: DataTypes.INTEGER
+            type: DataTypes.INTEGER,
+            defaultValue: 1
             //0 registration open
             //1 registration closed
             //2 event cancelled
