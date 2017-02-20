@@ -143,6 +143,17 @@ describe('Student Functions', () => {
                     done();
                 });
         });
+        it('Gets all events registered (no events)', done => {
+            request(url)
+                .get('/student/event/')
+                .set('x-auth-token', input.token)
+                .expect(200)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.body.should.be.eql([]);
+                    done();
+                });
+        });
         it('Gets if event is not registered', done => {
             request(url)
                 .get('/student/event/' + id)
@@ -164,6 +175,19 @@ describe('Student Functions', () => {
                     done();
                 });
         });
+        it('Gets all events registered (single event)', done => {
+            request(url)
+                .get('/student/event/')
+                .set('x-auth-token', input.token)
+                .expect(200)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.body.should.not.be.an.Array;
+                    res.body.should.have.size(1);
+                    done();
+                });
+        });
+
         it('Errors on Registers student to group event without group attribute', done => {
             request(url)
                 .put('/student/event/' + groupId)
@@ -185,6 +209,18 @@ describe('Student Functions', () => {
                 .end((err, res) => {
                     should.not.exist(err);
                     res.body.should.be.eql("success");
+                    done();
+                });
+        });
+        it('Gets all events registered (group event)', done => {
+            request(url)
+                .get('/student/event/')
+                .set('x-auth-token', input.token)
+                .expect(200)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.body.should.not.be.an.Array;
+                    res.body.should.have.size(2);
                     done();
                 });
         });

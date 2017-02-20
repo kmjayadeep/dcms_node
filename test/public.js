@@ -8,10 +8,10 @@ var should = require('should'),
     constant = require('../constant'),
     config = require('../config')();
 
-    var url = config.serverUrl;
+var url = config.serverUrl;
 describe('Public Functions', () => {
     describe('Event Functions', () => {
-        id="";
+        id = "";
         it('Admin puts an event for testing', done => {
             request(url)
                 .put('/dcms-admin/event')
@@ -40,7 +40,7 @@ describe('Public Functions', () => {
         });
         it('Gives single event', done => {
             request(url)
-                .get('/public/event/'+id)
+                .get('/public/event/' + id)
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .end((err, res) => {
@@ -51,7 +51,7 @@ describe('Public Functions', () => {
         });
         it('Gives error on single event with wrong id', done => {
             request(url)
-                .get('/public/event/'+"-1")
+                .get('/public/event/' + "-1")
                 .expect('Content-Type', /json/)
                 .expect(400)
                 .end((err, res) => {

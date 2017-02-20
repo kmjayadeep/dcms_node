@@ -192,4 +192,110 @@ router.get('/:id', (req, res, next) => {
     }
 });
 
+/**
+ * @api {get} /student/event get registered events
+ * @apiDescription find all the events that the logged in student has registered for
+ * @apiGroup Student
+ * @apiUse tokenErrors
+ *
+ * @apiErrorExample {json} error
+ * {"code":5,"message":"Could not fetch events"}
+ * 
+ * @apiSuccessExample {json} success
+ * [
+  {
+    "id": 123,
+    "name": "sdf",
+    "description": "asdf",
+    "format": "asdf",
+    "prize1": 1234,
+    "prize2": 13,
+    "prize3": 123,
+    "group": false,
+    "image": "",
+    "maxPerGroup": 0,
+    "category": "AR",
+    "regFee": 34,
+    "status": 1,
+    "day": 1,
+    "time": "10:20",
+    "isWorkshop": true,
+    "contactName1": "asdf",
+    "contactPhone1": "654321987",
+    "contactEmail1": "asdf@asdf.com",
+    "contactName2": "asdf",
+    "contactPhone2": null,
+    "contactEmail2": null,
+    "createdAt": null,
+    "updatedAt": "2017-02-18T06:43:17.000Z",
+    "adminId": null
+  },
+  {
+    "id": 126,
+    "name": "myEvent",
+    "description": "my event",
+    "format": "this event format",
+    "prize1": 1000,
+    "prize2": 500,
+    "prize3": 300,
+    "group": true,
+    "image": "someurl",
+    "maxPerGroup": 0,
+    "category": "CS",
+    "regFee": 0,
+    "status": 1,
+    "day": null,
+    "time": null,
+    "isWorkshop": false,
+    "contactName1": null,
+    "contactPhone1": null,
+    "contactEmail1": null,
+    "contactName2": null,
+    "contactPhone2": null,
+    "contactEmail2": null,
+    "createdAt": "2017-02-20T04:26:13.000Z",
+    "updatedAt": "2017-02-20T04:26:13.000Z",
+    "adminId": null
+  }
+]
+ */
+router.get('/', (req, res, next) => {
+    var getGroupStudent = models.groupStudent.findAll({
+        where: {
+            studentId: req.student.id
+        }
+    });
+    var getEventStudent = models.eventStudent.findAll({
+        where: {
+            studentId: req.student.id
+        }
+    });
+    try {
+        Promise.all([getEventStudent, getGroupStudent])
+            .spread((eventStudent, groupStudent) => {
+                eventIds = eventStudent.map(x => {
+                    return x.eventId;
+                });
+                eventIds = eventIds.concat(groupStudent.map(x => {
+                    return x.eventId;
+                }));
+                eventIds = Array.from(new Set(eventIds));
+                return models.event.findAll({
+                    where: {
+                        $or: [{
+                            id: eventIds
+                        }]
+                    }
+                });
+            }).then(result => {
+                res.json(result);
+            }).catch(error => {
+                debug(error)
+                constant.cantfetchEvent.data = error;
+                res.status(400).json(constant.cantfetchEvent);
+            });
+    } catch (error) {
+        debug(error);
+    }
+});
 module.exports = router;

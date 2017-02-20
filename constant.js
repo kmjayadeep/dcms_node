@@ -27,6 +27,7 @@ module.exports = {
         },
         message: "Authentication Error"
     },
+
     adminNotFound: {
         code: 2,
         message: "Could not find admin data"
@@ -82,5 +83,9 @@ module.exports = {
     exceptionThrown: {
         code: 16,
         message: "Exception thrown"
+    },
+    studentSuspended: {
+        code: 17,
+        message: "Account has been suspended"
     }
 }
