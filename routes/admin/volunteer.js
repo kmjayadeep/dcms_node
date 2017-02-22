@@ -44,9 +44,9 @@ var _ = require('underscore');
  * 
  */
 router.get('/eventRegistered/:id', (req, res, next) => {
-    debug(_.pick(req.query, 'uid', 'phone'))
+    debug(_.pick(req.query, 'uid', 'phone', 'email'))
     var findStudent = models.student.findOne({
-        where: _.pick(req.query, 'uid', 'phone')
+        where: _.pick(req.query, 'uid', 'phone', 'email')
     });
     var findEvent = models.event.findOne({
         where: {

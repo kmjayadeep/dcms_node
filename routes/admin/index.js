@@ -10,6 +10,7 @@ router.use('/event', require('./event'));
 router.use('/workshop', require('./workshop'));
 router.use('/student', require('./student'));
 router.use('/volunteer', require('./volunteer'));
+router.use('/highlight', require('./highlight'));
 
 /**
  * @apiDefine optional

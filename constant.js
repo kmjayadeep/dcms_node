@@ -15,17 +15,11 @@ module.exports = {
     },
     noAuthToken: {
         code: 1,
-        data: {
-            msg: "No authentication token"
-        },
-        message: "Authentication Error"
+        message: "No authentication token"
     },
     wrongToken: {
         code: 1,
-        data: {
-            msg: "Wrong authentication token"
-        },
-        message: "Authentication Error"
+        message: "Wrong authentication token"
     },
 
     adminNotFound: {
@@ -87,5 +81,19 @@ module.exports = {
     studentSuspended: {
         code: 17,
         message: "Account has been suspended"
-    }
+    },
+    cantfetchHighlights: {
+        code: 18,
+        message: "Could not fetch highlights"
+    },
+    cantcreateHighlights: {
+        code: 19,
+        message: "Could not create highlights"
+    },
+
+    cantEditHighlight: {
+        code: 20,
+        message: "Could not edit highlights"
+    },
+
 }

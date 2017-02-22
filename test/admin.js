@@ -36,7 +36,7 @@ describe('Admin Functions', () => {
                 .expect(401)
                 .end((err, res) => {
                     should.not.exist(err);
-                    res.body.should.be.eql(constant.noAuthToken);
+                    res.body.should.containEql(constant.noAuthToken);
                     done();
                 });
         });
@@ -48,7 +48,7 @@ describe('Admin Functions', () => {
                 .expect(401)
                 .end((err, res) => {
                     should.not.exist(err);
-                    res.body.should.be.eql(constant.wrongToken);
+                    res.body.should.containEql(constant.wrongToken);
                     done();
                 });
         });

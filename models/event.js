@@ -29,21 +29,23 @@ module.exports = function(sequelize, DataTypes) {
         regFee: {
             type: DataTypes.INTEGER,
             defaultValue: 0
-            //For group event, fee is per group
+                //For group event, fee is per group
         },
         status: {
             type: DataTypes.INTEGER,
             defaultValue: 1
-            //0 registration open
-            //1 registration closed
-            //2 event cancelled
+                //0 registration open
+                //1 registration closed
+                //2 event cancelled
         },
         day: DataTypes.INTEGER, //day 1 2 3
         time: DataTypes.STRING,
-        isWorkshop:{
+        isWorkshop: {
             type: DataTypes.BOOLEAN,
             defaultValue: false
         },
+        location: DataTypes.STRING,
+        timeRequired: DataTypes.STRING,
         contactName1: DataTypes.STRING,
         contactPhone1: DataTypes.STRING,
         contactEmail1: DataTypes.STRING,

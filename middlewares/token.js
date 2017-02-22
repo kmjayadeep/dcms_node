@@ -20,27 +20,45 @@ module.exports = function(req, res, next) {
         //random verification for test purposes
         req.uid = constant.testProfile.uid;
         req.profile = constant.testProfile;
-        models.student.findOne({
-            where: {
-                uid: req.uid
-            }
-        }).then(result => {
-            if (result.status != 'active')
-                return res.status(400).json(constant.studentSuspended);
-            req.student = result;
-            return models.admin.findOne({
+
+        if (req.url.startsWith('/student/login')) {
+            return next();
+        }
+        if (req.url.startsWith('/student')) {
+            //TODO check if suspended
+            models.student.findOne({
                 where: {
                     uid: req.uid
                 }
+            }).then(result => {
+                if (result.status != 'active')
+                    throw (constant.studentSuspended);
+                req.student = result;
+                return next();
+            }).catch(error => {
+                throw (error)
             });
-        }).then(admin => {
-            debug(admin);
-            if (admin)
-                req.admin = admin;
+        } else if (req.url.startsWith('/dcms-admin/auth')) {
             return next();
-        }).catch(error => {
-            return res.status(400).json(constant.adminNotFound);
-        });
+        } else if (req.url.startsWith('/dcms-admin')) {
+            models.admin.findOne({
+                where: {
+                    uid: req.profile.user_id
+                }
+            }).then(admin => {
+                if (admin && admin.status) {
+                    req.admin = admin;
+                    return next();
+                }
+                throw {
+                    msg: "Not Verified"
+                }
+            }).catch(error => {
+                constant.wrongToken.data = error;
+                return res.status(401).json(constant.wrongToken);
+            });
+        } else
+            next();
 
     } else if (req.url.startsWith('/public')) {
         return next();
@@ -91,7 +109,7 @@ module.exports = function(req, res, next) {
                 } else
                     next();
             }).catch((error) => {
-                // constant.wrongToken.data = error;
+                constant.wrongToken.data = error;
                 res.status(401).json(constant.wrongToken);
             });
     }
