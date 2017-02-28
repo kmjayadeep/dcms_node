@@ -72,7 +72,7 @@ module.exports = function(req, res, next) {
                 req.profile = decodedToken;
                 debug(req.profile);
                 if (req.url.startsWith('/student/login')) {
-                    next();
+                    return next();
                 }
                 if (req.url.startsWith('/student')) {
                     //TODO check if suspended
@@ -89,7 +89,7 @@ module.exports = function(req, res, next) {
                         throw (error)
                     });
                 } else if (req.url.startsWith('/dcms-admin/auth')) {
-                    next();
+                    return next();
                 } else if (req.url.startsWith('/dcms-admin')) {
                     models.admin.findOne({
                         where: {
@@ -104,13 +104,13 @@ module.exports = function(req, res, next) {
                             msg: "Not Verified"
                         }
                     }).catch(error => {
-                        res.status(401).json(constant.wrongToken);
+                        return res.status(401).json(constant.wrongToken);
                     });
                 } else
-                    next();
+                    return next();
             }).catch((error) => {
                 constant.wrongToken.data = error;
-                res.status(401).json(constant.wrongToken);
+                return res.status(401).json(constant.wrongToken);
             });
     }
 }
