@@ -68,14 +68,18 @@ router.post('/login', function(req, res, next) {
             model: models.college
         }]
     }).then(result => {
+        console.log(result)
         if (result){
-            if (result.college != null)
-              result.college = result.college.name;  
+            if (result.dataValues.college != null)
+              result.dataValues.college = result.dataValues.college.name;  
             return new Promise((res, rej) => {
                 res(result);
             })
         }
-        return Student.create(req.profile);
+        else
+        {
+          return Student.create(req.profile);
+        }
     }).then(student => {
         return res.json(student);
     }).catch(err => {
