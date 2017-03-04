@@ -62,7 +62,10 @@ router.post('/login', function(req, res, next) {
     Student.findOne({
         where: {
             uid: req.uid
-        }
+        },
+        include: [{
+            model: models.college
+        }]
     }).then(result => {
         if (result)
             return new Promise((res, rej) => {

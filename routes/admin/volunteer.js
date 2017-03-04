@@ -143,9 +143,9 @@ router.get('/eventRegistered/:id', (req, res, next) => {
     {"code":5,"message":"Could not fetch events"} 
  * @apiUse tokenErrors
  */
-router.get('/registeredEvents', (req, res, next) => {
+router.post('/registeredEvents', (req, res, next) => {
     models.student.findOne({
-        where: _.pick(req.query, 'uid', 'phone', 'email')
+        where: _.pick(req.body, 'uid', 'phone', 'email')
     }).then(student => {
         var getGroupStudent = models.groupStudent.findAll({
             where: {
