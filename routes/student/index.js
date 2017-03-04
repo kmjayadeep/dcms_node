@@ -34,6 +34,7 @@ router.use('/event/', require('./event.js'));
   "createdAt": "2017-02-07T15:24:00.000Z",
   "updatedAt": "2017-02-07T15:24:00.000Z",
   "collegeId": null
+  "college": "my college"
 }
  *
 
@@ -67,10 +68,13 @@ router.post('/login', function(req, res, next) {
             model: models.college
         }]
     }).then(result => {
-        if (result)
+        if (result){
+            if (result.college != null)
+              result.college = result.college.name;  
             return new Promise((res, rej) => {
                 res(result);
             })
+        }
         return Student.create(req.profile);
     }).then(student => {
         return res.json(student);
