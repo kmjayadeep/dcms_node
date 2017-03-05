@@ -9,21 +9,45 @@ var wrapper = {
         var message = {
             to: '/topics/drishti',
             data: {
-                EVENT_SYNC: true
+                'type': 'EVENT_SYNC'
             }
         };
 
         var promise = new Promise((resolve,reject)=>{
-	        fcm.send(message, (err, res) => {
-	            if (err){
-	            	debug("Error : ",err);
-	                reject(err);
-	            }
-	            else{
-	            	debug("Resolve : ",res);
-	                resolve(res);
-	            }
-	        })
+            fcm.send(message, (err, res) => {
+                if (err){
+                    debug("Error : ",err);
+                    reject(err);
+                }
+                else{
+                    debug("Resolve : ",res);
+                    resolve(res);
+                }
+            })
+        })
+
+        return promise;
+    }
+
+    updateHighlightSync() {
+        var message = {
+            to: '/topics/drishti',
+            data: {
+                'type': 'HIGHLIGHT_SYNC'
+            }
+        };
+
+        var promise = new Promise((resolve,reject)=>{
+            fcm.send(message, (err, res) => {
+                if (err){
+                    debug("Error : ",err);
+                    reject(err);
+                }
+                else{
+                    debug("Resolve : ",res);
+                    resolve(res);
+                }
+            })
         })
 
         return promise;

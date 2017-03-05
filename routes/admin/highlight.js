@@ -2,7 +2,7 @@ var router = require('express').Router();
 var debug = require('debug')('public');
 var models = require('../../models');
 var constant = require('../../constant');
-
+var fcm = require('../fcm');
 /**
  * @api {put} /dcms-admin/highlight put a highlight
  * @apiDescription create a highlight entry in table
@@ -33,7 +33,7 @@ var constant = require('../../constant');
 router.put('/', (req, res, next) => {
     models.highlight.create(req.body)
         .then(result => {
-            fcm.updateSync();
+            fcm.updateHighlightSync();
             return res.json(result);
         }).catch(error => {
             constant.cantcreateHighlights.data = error;
@@ -67,7 +67,7 @@ router.post('/:id', (req, res, next) => {
             id: req.params.id
         }
     }).then(result => {
-        fcm.updateSync();
+        fcm.updateHighlightSync();
         return res.json(result);
     }).catch(error => {
         constant.cantEditHighlight.data = error;
