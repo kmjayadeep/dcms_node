@@ -33,6 +33,7 @@ var constant = require('../../constant');
 router.put('/', (req, res, next) => {
     models.highlight.create(req.body)
         .then(result => {
+            fcm.updateSync();
             return res.json(result);
         }).catch(error => {
             constant.cantcreateHighlights.data = error;
@@ -66,6 +67,7 @@ router.post('/:id', (req, res, next) => {
             id: req.params.id
         }
     }).then(result => {
+        fcm.updateSync();
         return res.json(result);
     }).catch(error => {
         constant.cantEditHighlight.data = error;

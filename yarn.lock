@@ -698,6 +698,12 @@ faye-websocket@0.9.3:
   dependencies:
     websocket-driver ">=0.5.1"
 
+fcm-node@^1.0.16:
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/fcm-node/-/fcm-node-1.0.16.tgz#9c1683014cfe709cb0c983574496a38ab317a905"
+  dependencies:
+    retry "^0.9.0"
+
 filename-regex@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/filename-regex/-/filename-regex-2.0.0.tgz#996e3e80479b98b9897f15a8a58b3d084e926775"
@@ -2461,6 +2467,10 @@ retry-as-promised@^2.0.0:
     bluebird "^3.4.6"
     cross-env "^3.1.2"
     debug "^2.2.0"
+
+retry@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/retry/-/retry-0.9.0.tgz#6f697e50a0e4ddc8c8f7fb547a9b60dead43678d"
 
 right-align@^0.1.1:
   version "0.1.3"

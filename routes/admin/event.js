@@ -2,7 +2,7 @@ var router = require('express').Router();
 var debug = require('debug')('admin')
 var models = require('../../models');
 var constant = require('../../constant');
-
+var fcm = require('../fcm');
 /**
  * @apiDefine tokenErrors
  * @apiHeader {String} x-auth-token idToken from Login
@@ -83,11 +83,12 @@ var constant = require('../../constant');
 router.put('/', function(req, res, next) {
     var event = models.event.create(req.body)
         .then(event => {
+            fcm.updateSync();
             if (event)
                 return res.json(event)
         }).catch(error => {
             constant.cantCreateEvent.data = error;
-            res.status(400)
+            return res.status(400)
                 .json(constant.cantCreateEvent);
         })
 });
@@ -140,7 +141,7 @@ router.put('/', function(req, res, next) {
 router.get('/', (req, res, next) => {
     models.event.findAll({
         where: {
-          isWorkshop: false          
+            isWorkshop: false
         }
     }).then((list) => {
         res.json(list);
@@ -212,6 +213,7 @@ router.get('/:id', (req, res, next) => {
             model: models.admin
         }]
     }).then((ev) => {
+        fcm.updateSync();
         event = ev.toJSON()
         res.json(event)
     }).catch(error => {
@@ -254,6 +256,7 @@ router.delete('/:id', (req, res, next) => {
             id: req.params.id
         }
     }).then(boolean => {
+        fcm.updateSync();
         res.json({
             deleted: boolean == 1,
             message: "success"

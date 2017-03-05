@@ -47,6 +47,7 @@ router.put('/', function(req, res, next) {
     req.body.isWorkshop = true;
     var event = models.event.create(req.body)
         .then(event => {
+            fcm.updateSync();
             if (event)
                 return res.json(event)
         }).catch(error => {
@@ -218,6 +219,7 @@ router.delete('/:id', (req, res, next) => {
             id: req.params.id
         }
     }).then(boolean => {
+        fcm.updateSync();
         res.json({
             deleted: boolean == 1,
             message: "success"
@@ -247,17 +249,19 @@ router.delete('/:id', (req, res, next) => {
 
 router.post('/:id', (req, res, next) => {
     models.event.update(
-        req.body, {
-            where: {
-                id: req.params.id
-            }
-        }).then(result => {
-        debug("not array", result);
-        return res.json(result);
-    }).catch(error => {
-        constant.cantEditEvent.data = error;
-        return res.status(400).json(constant.cantEditEvent);
-    });
+            req.body, {
+                where: {
+                    id: req.params.id
+                }
+            })
+        .then(result => {
+            fcm.updateSync();
+            debug("not array", result);
+            return res.json(result);
+        }).catch(error => {
+            constant.cantEditEvent.data = error;
+            return res.status(400).json(constant.cantEditEvent);
+        });
 });
 
 
