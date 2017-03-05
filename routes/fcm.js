@@ -27,7 +27,7 @@ var wrapper = {
         })
 
         return promise;
-    }
+    },
 
     updateHighlightSync() {
         var message = {
