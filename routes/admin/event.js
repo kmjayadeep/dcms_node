@@ -213,7 +213,6 @@ router.get('/:id', (req, res, next) => {
             model: models.admin
         }]
     }).then((ev) => {
-        fcm.updateSync();
         event = ev.toJSON()
         res.json(event)
     }).catch(error => {
@@ -291,6 +290,7 @@ router.post('/:id', (req, res, next) => {
                 id: req.params.id
             }
         }).then(result => {
+        fcm.updateSync();
         debug("not array", result);
         return res.json(result);
     }).catch(error => {
