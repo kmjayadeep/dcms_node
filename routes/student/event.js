@@ -65,6 +65,9 @@ router.put('/:id', (req, res, next) => {
                             msg: "No group tag found"
                         }))
                     }
+                    req.body.group = req.body.group.map((x)=>{
+                        return parseInt(x);
+                    });
                     req.body.group.push(student.id);
                     req.body.group = Array.from(new Set(req.body.group));
                     return models.groupStudent.bulkCreate(
