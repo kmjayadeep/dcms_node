@@ -95,5 +95,9 @@ module.exports = {
         code: 20,
         message: "Could not edit highlights"
     },
+    fcmError: {
+        code: 21,
+        message: "Could not send notification"
+    }
 
 }

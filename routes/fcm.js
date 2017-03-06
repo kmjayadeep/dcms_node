@@ -51,7 +51,31 @@ var wrapper = {
         })
 
         return promise;
-    }
+    },
 
+    notification(title, body) {
+        var message = {
+                to: '/topics/drishti' ,
+                notification: {
+                    'title': title,
+                    'body': body
+                }
+            }
+
+        var promise = new Promise((resolve,reject)=>{
+            fcm.send(message, (err, res) => {
+                if (err){
+                    debug("Error : ",err);
+                    reject(err);
+                }
+                else{
+                    debug("Resolve : ",res);
+                    resolve(res);
+                }
+            })
+        })
+
+        return promise;
+    }
 };
 module.exports = wrapper;

@@ -11,7 +11,7 @@ router.use('/workshop', require('./workshop'));
 router.use('/student', require('./student'));
 router.use('/volunteer', require('./volunteer'));
 router.use('/highlight', require('./highlight'));
-
+var fcm = require('../fcm');
 /**
  * @apiDefine optional
  * 
@@ -185,4 +185,29 @@ router.post('/:id', (req, res, next) => {
     }
 });
 
+/**
+ * @api {put}  /dcms-admin/notification post a notification
+ * @apiDescription post a firebase notification
+ * @apiGroup Admin
+ * @apiParam {string} title title of the notification
+ * @apiParam {string} body body of the notification
+ * @apiParam {boolean} [notification] whether it is notification or not
+ * @apiSampleRequest server.drishticet.org/dcms-admin/notification
+ * @apiSuccessExample success
+ * {
+  "message_id": 7489549903926726000
+   }
+ *  @apiErrorExample error
+    {"code":21,"message":"Could not send notification"}
+ * 
+ * @apiUse tokenErrors
+ */
+router.put('/notification', (req, res, next)=>{
+    fcm.notification(req.body.title, req.body.body)
+    .then(result=>{
+        res.json(JSON.parse(result));
+    }).catch(error=>{
+        res.status(400).json(constant.fcmError);
+    })
+})
 module.exports = router;
