@@ -2,6 +2,7 @@ var router = require('express').Router();
 var debug = require('debug')('admin')
 var models = require('../../models');
 var constant = require('../../constant');
+var fcm = require('../fcm');
 
 /**
  * @api {put} /dcms-admin/workshop/ add workshop
@@ -48,8 +49,7 @@ router.put('/', function(req, res, next) {
     var event = models.event.create(req.body)
         .then(event => {
             fcm.updateSync();
-            if (event)
-                return res.json(event)
+            return res.json(event)
         }).catch(error => {
             constant.cantCreateEvent.data = error;
             res.status(400)
@@ -190,7 +190,7 @@ router.get('/:id', (req, res, next) => {
  * @api {delete} /dcms-admin/workshop/:id delete events
  * @apiName Delete Workshop
  * @apiGroup Admin/workshop
- * 
+ *
  * @apiSuccessExample {json} deleted
 {
   "deleted": true,
@@ -211,7 +211,7 @@ router.get('/:id', (req, res, next) => {
 }
 
  * @apiUse tokenErrors
- * 
+ *
  */
 router.delete('/:id', (req, res, next) => {
     models.event.destroy({
@@ -234,7 +234,7 @@ router.delete('/:id', (req, res, next) => {
  * @api {post} /dcms-admin/workshop/:id edit events
  * @apiName Edit Workshop
  * @apiGroup Admin/workshop
- * 
+ *
  *
  * @apiParamExample sample request
 {
