@@ -14,6 +14,12 @@ module.exports = function(sequelize, DataTypes) {
         promo: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        is_event: {
+            type: DataTypes.BOOLEAN
+        },
+        server_id: {
+            type: DataTypes.INTEGER
         }
 
     });

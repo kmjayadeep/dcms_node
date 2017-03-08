@@ -191,8 +191,7 @@ router.post('/:id', (req, res, next) => {
  * @apiGroup Admin
  * @apiParam {string} title title of the notification
  * @apiParam {string} body body of the notification
- * @apiParam {boolean} [notification] whether it is notification or not
- * @apiSampleRequest server.drishticet.org/dcms-admin/notification
+ * @apiSampleRequest http://server.drishticet.org/dcms-admin/notification
  * @apiSuccessExample success
  * {
   "message_id": 7489549903926726000
