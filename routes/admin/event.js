@@ -3,6 +3,7 @@ var debug = require('debug')('admin')
 var models = require('../../models');
 var constant = require('../../constant');
 var fcm = require('../fcm');
+var Promise = require('bluebird');
 /**
  * @apiDefine tokenErrors
  * @apiHeader {String} x-auth-token idToken from Login
@@ -298,6 +299,57 @@ router.post('/:id', (req, res, next) => {
         return res.status(400).json(constant.cantEditEvent);
     });
 });
-
-
+/**
+ * @api {get} /dcms-admin/event/student/:id registerd students
+ * @apiDescription Get all the students for a particular event by giving the event id
+ * @apiGroup Admin/Event
+ * @apiVersion 0.1.0
+ * 
+ * @apiParam {string} :id id of the event
+ * @apiSuccessExample success
+ * [
+  {
+    "id": 11,
+    "report": null,
+    "paid": false,
+    "createdAt": "2017-02-27T07:47:50.000Z",
+    "updatedAt": "2017-02-27T07:47:50.000Z",
+    "eventId": 1,
+    "studentId": 100006,
+    "group_students": [
+      {
+        "createdAt": "2017-02-27T07:47:50.000Z",
+        "updatedAt": "2017-02-27T07:47:50.000Z",
+        "eventStudentId": 11,
+        "studentId": 100006,
+        "eventId": 1
+      }
+    ]
+  }
+]
+ * @apiErrorExample error
+{"code":14,"message":"Could not find event to register"}
+ * @apiUse tokenErrors
+ */
+router.get('/student/:id', (req, res, next) => {
+    try {
+        models.eventStudent.findAll({
+            where: {
+                eventId: req.params.id
+            },
+            include: [{
+                model: models.groupStudent
+            }]
+        }).then(studentList => {
+            return res.json(studentList);
+            console.log(error);
+        }).catch(error => {
+            constant.noEventError.data = error;
+            return res.status(400).json(constant.noEventError);
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
 module.exports = router;
