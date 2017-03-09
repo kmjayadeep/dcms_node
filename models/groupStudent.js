@@ -15,6 +15,7 @@ module.exports = function(sequelize, DataTypes) {
                 models.event.hasMany(GroupStudent);
                 models.eventStudent.hasMany(GroupStudent);
                 GroupStudent.belongsTo(models.eventStudent);
+                GroupStudent.belongsTo(models.student)
             }
         }
 

@@ -307,22 +307,50 @@ router.post('/:id', (req, res, next) => {
  * 
  * @apiParam {string} :id id of the event
  * @apiSuccessExample success
- * [
+[
   {
-    "id": 11,
-    "report": null,
-    "paid": false,
-    "createdAt": "2017-02-27T07:47:50.000Z",
-    "updatedAt": "2017-02-27T07:47:50.000Z",
-    "eventId": 1,
-    "studentId": 100006,
+    "name": "myEvent",
+    "students": [
+      {
+        "name": "John Doe",
+        "email": "johndoe@gmail.com",
+        "phone": "426351789",
+        "college": {
+          "name": "mycollege"
+        },
+        "event_student": {
+          "id": 15,
+          "report": null,
+          "paid": false,
+          "createdAt": "2017-03-09T14:32:37.000Z",
+          "updatedAt": "2017-03-09T14:32:37.000Z",
+          "eventId": 1,
+          "studentId": 100006
+        }
+      }
+    ],
     "group_students": [
       {
-        "createdAt": "2017-02-27T07:47:50.000Z",
-        "updatedAt": "2017-02-27T07:47:50.000Z",
-        "eventStudentId": 11,
-        "studentId": 100006,
-        "eventId": 1
+        "eventStudentId": 15,
+        "student": {
+          "name": "blah",
+          "email": "blah",
+          "phone": "blah",
+          "college": {
+              "name" : "blah"
+          }
+        }
+      },
+      {
+        "eventStudentId": 15,
+        "student": {
+          "name": "John Doe",
+          "email": "johndoe@gmail.com",
+          "phone": "426351789",
+          "college": {
+            "name": "mycollege"
+          }
+        }
       }
     ]
   }
@@ -333,12 +361,29 @@ router.post('/:id', (req, res, next) => {
  */
 router.get('/student/:id', (req, res, next) => {
     try {
-        models.eventStudent.findAll({
+        models.event.findAll({
             where: {
-                eventId: req.params.id
+                id: req.params.id
             },
+            attributes: ['name'],
             include: [{
-                model: models.groupStudent
+                model: models.student,
+                attributes: ['name', 'email', 'phone'],
+                include: [{
+                    model: models.college,
+                    attributes: ['name']
+                }]
+            }, {
+                model: models.groupStudent,
+                attributes: ['eventStudentId'],
+                include: [{
+                    model: models.student,
+                    attributes: ['name', 'email', 'phone'],
+                    include: [{
+                        model: models.college,
+                        attributes: ['name']
+                    }],
+                }]
             }]
         }).then(studentList => {
             return res.json(studentList);
