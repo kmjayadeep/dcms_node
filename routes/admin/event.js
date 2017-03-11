@@ -152,76 +152,6 @@ router.get('/', (req, res, next) => {
             .json(constant.cantfetchEvent)
     })
 });
-/**
- * @api {get} /dcms-admin/event/:id get event
- * @apiName Get Event
- * @apiGroup Admin/Event
- *
- *
- * @apiSuccessExample {json} success
-{
-  "id": 1000000006,
-  "name": "Event Name changed",
-  "description": "Event description changed",
-  "format": "Event format",
-  "problemStatement": "Event problem Statement",
-  "prize1": 1,
-  "prize2": 2,
-  "prize3": 3,
-  "group": false,
-  "image": null,
-  "maxParticipants": 0,
-  "maxGroups": 0,
-  "createdAt": "2017-02-07T15:49:05.000Z",
-  "updatedAt": "2017-02-07T15:49:06.000Z",
-  "admins": [],
-  "allAdmins": [
-    {
-      "id": 1,
-      "name": "nisham mohammed",
-      "uid": "bJ1rrx0lpVSbUPs1WphU0BHfItD2",
-      "email": "mnishamk1995@gmail.com",
-      "phone": null,
-      "picture": "https://lh6.googleusercontent.com/-LdIUNFJBriQ/AAAAAAAAAAI/AAAAAAAAAvI/HUwlqct9yJY/photo.jpg",
-      "status": 0,
-      "eventMail": null,
-      "createdAt": "2017-02-07T15:03:46.000Z",
-      "updatedAt": "2017-02-07T15:03:46.000Z"
-    },
-    {
-      "id": 2,
-      "name": "John Doe",
-      "uid": "cJ2crx0lpVSbvPs1VbhU0BHgItE2",
-      "email": "johndoe@gmail.com",
-      "phone": null,
-      "picture": "https://lh6.googleusercontent.com/-LdIUNFJBriQ/AAAAAAAAAAI/AAAAAAAAAvI/HUwlqct9yJY/photo.jpg",
-      "status": 10,
-      "eventMail": null,
-      "createdAt": "2017-02-07T15:28:51.000Z",
-      "updatedAt": "2017-02-07T15:53:11.000Z"
-    }
-  ]
-}
- * @apiUse tokenErrors
- */
-router.get('/:id', (req, res, next) => {
-    let event = null
-    models.event.findOne({
-        where: {
-            id: req.params.id
-        },
-        include: [{
-            model: models.admin
-        }]
-    }).then((ev) => {
-        event = ev.toJSON()
-        res.json(event)
-    }).catch(error => {
-        constant.cantfetchEvent.data = error;
-        res.status(400)
-            .json(constant.cantfetchEvent)
-    })
-});
 
 /**
  * @api {delete} /dcms-admin/event/:id delete events
@@ -396,5 +326,137 @@ router.get('/student/:id', (req, res, next) => {
         console.log(error);
         return res.status(500).json(error);
     }
+});
+
+/**
+ * @api {get} /dcms-admin/event/registeredCount registeredCount
+ * @apiDescription get no of students registered for every event
+ * @apiGroup Admin/Event
+ * @apiVersion 0.1.0
+ * 
+ * 
+ * @apiSuccessExample success
+ * [
+  {
+    "id": 1,
+    "students": 1,
+    "groupStudents": 2
+  },
+  {
+    "id": 2,
+    "students": 1,
+    "groupStudents": 0
+  }
+]
+ * @apiErrorExample
+    #constant.noEventError#
+ * 
+ * @apiUse tokenErrors
+ */
+router.get('/registeredCount/', (req, res, next) => {
+        try {
+            models.event.findAll({
+                where: {},
+                attributes: ['id', 'name'],
+                include: [{
+                    model: models.student,
+                    attributes: ['id'],
+                }, {
+                    model: models.groupStudent,
+                    attributes: ['eventStudentId'],
+                    group: ['eventStudentId'],
+                    include: [{
+                        model: models.student,
+                        attributes: ['id'],
+                    }]
+                }]
+            }).then(studentList => {
+                studentList = studentList.map(x => {
+                    object = {}
+                    object.id = x.id;
+                    object.students = x.students.length;
+                    object.groupStudents = x.group_students.length;
+                    return object;
+                })
+                return res.json(studentList);
+                console.log(error);
+            }).catch(error => {
+                constant.noEventError.data = error;
+                return res.status(400).json(constant.noEventError);
+            });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json(error);
+        }
+    })
+    /**
+     * @api {get} /dcms-admin/event/:id get event
+     * @apiName Get Event
+     * @apiGroup Admin/Event
+     *
+     *
+     * @apiSuccessExample {json} success
+    {
+      "id": 1000000006,
+      "name": "Event Name changed",
+      "description": "Event description changed",
+      "format": "Event format",
+      "problemStatement": "Event problem Statement",
+      "prize1": 1,
+      "prize2": 2,
+      "prize3": 3,
+      "group": false,
+      "image": null,
+      "maxParticipants": 0,
+      "maxGroups": 0,
+      "createdAt": "2017-02-07T15:49:05.000Z",
+      "updatedAt": "2017-02-07T15:49:06.000Z",
+      "admins": [],
+      "allAdmins": [
+        {
+          "id": 1,
+          "name": "nisham mohammed",
+          "uid": "bJ1rrx0lpVSbUPs1WphU0BHfItD2",
+          "email": "mnishamk1995@gmail.com",
+          "phone": null,
+          "picture": "https://lh6.googleusercontent.com/-LdIUNFJBriQ/AAAAAAAAAAI/AAAAAAAAAvI/HUwlqct9yJY/photo.jpg",
+          "status": 0,
+          "eventMail": null,
+          "createdAt": "2017-02-07T15:03:46.000Z",
+          "updatedAt": "2017-02-07T15:03:46.000Z"
+        },
+        {
+          "id": 2,
+          "name": "John Doe",
+          "uid": "cJ2crx0lpVSbvPs1VbhU0BHgItE2",
+          "email": "johndoe@gmail.com",
+          "phone": null,
+          "picture": "https://lh6.googleusercontent.com/-LdIUNFJBriQ/AAAAAAAAAAI/AAAAAAAAAvI/HUwlqct9yJY/photo.jpg",
+          "status": 10,
+          "eventMail": null,
+          "createdAt": "2017-02-07T15:28:51.000Z",
+          "updatedAt": "2017-02-07T15:53:11.000Z"
+        }
+      ]
+    }
+     * @apiUse tokenErrors
+     */
+router.get('/:id', (req, res, next) => {
+    let event = null
+    models.event.findOne({
+        where: {
+            id: req.params.id
+        },
+        include: [{
+            model: models.admin
+        }]
+    }).then((ev) => {
+        event = ev.toJSON()
+        res.json(event)
+    }).catch(error => {
+        constant.cantfetchEvent.data = error;
+        res.status(400)
+            .json(constant.cantfetchEvent)
+    })
 });
 module.exports = router;
