@@ -10,6 +10,7 @@ router.use('/event', require('./event'));
 router.use('/workshop', require('./workshop'));
 router.use('/student', require('./student'));
 router.use('/volunteer', require('./volunteer'));
+router.use('/college', require('./college'));
 router.use('/highlight', require('./highlight'));
 var fcm = require('../fcm');
 /**
@@ -201,12 +202,12 @@ router.post('/:id', (req, res, next) => {
  * 
  * @apiUse tokenErrors
  */
-router.put('/notification', (req, res, next)=>{
+router.put('/notification', (req, res, next) => {
     fcm.notification(req.body.title, req.body.body)
-    .then(result=>{
-        res.json(JSON.parse(result));
-    }).catch(error=>{
-        res.status(400).json(constant.fcmError);
-    })
+        .then(result => {
+            res.json(JSON.parse(result));
+        }).catch(error => {
+            res.status(400).json(constant.fcmError);
+        })
 })
 module.exports = router;

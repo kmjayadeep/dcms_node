@@ -98,6 +98,10 @@ module.exports = {
     fcmError: {
         code: 21,
         message: "Could not send notification"
+    },
+    cantPutCollege: {
+        code: 22,
+        message: "Could not put college"
     }
 
 }
