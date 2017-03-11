@@ -24,7 +24,11 @@ var constant = require('../../constant');
    }
 		 */
 router.get('/', (req, res, next) => {
-    models.college.findAll({})
+    models.college.findAll({
+            order: [
+                ['name', 'ASC']
+            ]
+        })
         .then(result => {
             res.json(result);
         }).catch(error => {

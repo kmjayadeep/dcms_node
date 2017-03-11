@@ -348,8 +348,8 @@ router.get('/student/:id', (req, res, next) => {
     "groupStudents": 0
   }
 ]
- * @apiErrorExample
-    #constant.noEventError#
+ * @apiErrorExample error
+    {"code":14,"message":"Could not find event to register"}
  * 
  * @apiUse tokenErrors
  */
