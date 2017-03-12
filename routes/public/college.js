@@ -40,7 +40,7 @@ router.get('/', (req, res, next) => {
  * @api {put} /public/college/ add college
  * @apiDescription add a new college to server
  * @apiVersion 0.2.0
- * @apiGroup Admin
+ * @apiGroup Public
  * @apiParam {string} name college name
  * @apiSuccessExample success
  * {
