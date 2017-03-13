@@ -48,7 +48,11 @@ module.exports = function(req, res, next) {
             }).then(admin => {
                 if (admin && admin.status) {
                     req.admin = admin;
-                    return next();
+                    if (req.url.startsWith('/dcms-admin/volunteer')) {
+                        if (req.admin.status >= 5)
+                            return next();
+                    } else
+                        return next();
                 }
                 throw {
                     msg: "Not Verified"
@@ -98,7 +102,11 @@ module.exports = function(req, res, next) {
                     }).then(admin => {
                         if (admin && admin.status) {
                             req.admin = admin;
-                            return next();
+                            if (req.url.startsWith('/dcms-admin/volunteer')) {
+                                if (req.admin.status >= 5)
+                                    return next();
+                            } else
+                                return next();
                         }
                         throw {
                             msg: "Not Verified"
