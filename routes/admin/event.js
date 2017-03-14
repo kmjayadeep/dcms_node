@@ -4,6 +4,7 @@ var models = require('../../models');
 var constant = require('../../constant');
 var fcm = require('../fcm');
 var Promise = require('bluebird');
+var _ = require('underscore');
 /**
  * @apiDefine tokenErrors
  * @apiHeader {String} x-auth-token idToken from Login
@@ -234,7 +235,7 @@ router.post('/:id', (req, res, next) => {
  * @apiDescription Get all the students for a particular event by giving the event id
  * @apiGroup Admin/Event
  * @apiVersion 0.1.0
- * 
+ * @apiDeprecated please use (#Admin_Event:GetDcmsAdminEventRegisteredcountEventid)
  * @apiParam {string} :id id of the event
  * @apiSuccessExample success
 [
@@ -336,14 +337,26 @@ router.get('/student/:id', (req, res, next) => {
  * 
  * 
  * @apiSuccessExample success
- * [
+[
   {
     "id": 1,
+    "name": "myEvent",
+    "image": "someurl",
+    "category": "CS",
+    "day": null,
+    "time": null,
+    "group": true,
     "students": 1,
     "groupStudents": 2
   },
   {
     "id": 2,
+    "name": "myEvent",
+    "image": "someurl",
+    "category": "CS",
+    "day": null,
+    "time": null,
+    "group": false,
     "students": 1,
     "groupStudents": 0
   }
@@ -353,94 +366,230 @@ router.get('/student/:id', (req, res, next) => {
  * 
  * @apiUse tokenErrors
  */
-router.get('/registeredCount/', (req, res, next) => {
-        try {
-            models.event.findAll({
-                where: {},
-                attributes: ['id', 'name'],
+router.get('/registeredCount', (req, res, next) => {
+    try {
+        models.event.findAll({
+            where: {},
+            include: [{
+                model: models.student,
+                attributes: ['id'],
+            }, {
+                model: models.groupStudent,
+                attributes: ['eventStudentId'],
+                group: ['eventStudentId'],
                 include: [{
                     model: models.student,
                     attributes: ['id'],
-                }, {
-                    model: models.groupStudent,
-                    attributes: ['eventStudentId'],
-                    group: ['eventStudentId'],
-                    include: [{
-                        model: models.student,
-                        attributes: ['id'],
-                    }]
                 }]
-            }).then(studentList => {
-                studentList = studentList.map(x => {
-                    object = {}
-                    object.id = x.id;
-                    object.students = x.students.length;
-                    object.groupStudents = x.group_students.length;
-                    return object;
-                })
-                return res.json(studentList);
-                console.log(error);
-            }).catch(error => {
-                constant.noEventError.data = error;
-                return res.status(400).json(constant.noEventError);
-            });
-        } catch (error) {
+            }]
+        }).then(studentList => {
+            studentList = studentList.map(x => {
+                object = {};
+                object.id = x.id;
+                object.name = x.name;
+                object.image = x.image;
+                object.category = x.category;
+                object.day = x.day;
+                object.time = x.time;
+                object.group = x.group;
+                object.students = x.students.length;
+                object.groupStudents = x.group_students.length;
+                return object;
+            })
+            return res.json(studentList);
             console.log(error);
-            return res.status(500).json(error);
-        }
-    })
-    /**
-     * @api {get} /dcms-admin/event/:id get event
-     * @apiName Get Event
-     * @apiGroup Admin/Event
-     *
-     *
-     * @apiSuccessExample {json} success
+        }).catch(error => {
+            constant.noEventError.data = error;
+            return res.status(400).json(constant.noEventError);
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+
+/**
+ * @api {get} /dcms-admin/event/registeredCount/:eventId registeredCount details
+ * @apiDescription get students registered for single event
+ * @apiGroup Admin/Event
+ * @apiVersion 0.2.0
+ * @apiSuccessExample groupEvent
+{
+  "name": "myEvent",
+  "group": true,
+  "students": [
     {
-      "id": 1000000006,
-      "name": "Event Name changed",
-      "description": "Event description changed",
-      "format": "Event format",
-      "problemStatement": "Event problem Statement",
-      "prize1": 1,
-      "prize2": 2,
-      "prize3": 3,
-      "group": false,
-      "image": null,
-      "maxParticipants": 0,
-      "maxGroups": 0,
-      "createdAt": "2017-02-07T15:49:05.000Z",
-      "updatedAt": "2017-02-07T15:49:06.000Z",
-      "admins": [],
-      "allAdmins": [
+      "id": 100005,
+      "name": "random name",
+      "email": "coolemail@email.com",
+      "phone": "65498731",
+      "college": "bmycollege",
+      "paid": true,
+      "group": [
         {
-          "id": 1,
-          "name": "nisham mohammed",
-          "uid": "bJ1rrx0lpVSbUPs1WphU0BHfItD2",
-          "email": "mnishamk1995@gmail.com",
-          "phone": null,
-          "picture": "https://lh6.googleusercontent.com/-LdIUNFJBriQ/AAAAAAAAAAI/AAAAAAAAAvI/HUwlqct9yJY/photo.jpg",
-          "status": 0,
-          "eventMail": null,
-          "createdAt": "2017-02-07T15:03:46.000Z",
-          "updatedAt": "2017-02-07T15:03:46.000Z"
+          "id": 100005,
+          "name": "random name",
+          "email": "coolemail@email.com",
+          "phone": "65498731",
+          "college": "bmycollege"
         },
         {
-          "id": 2,
+          "id": 100006,
           "name": "John Doe",
-          "uid": "cJ2crx0lpVSbvPs1VbhU0BHgItE2",
           "email": "johndoe@gmail.com",
-          "phone": null,
-          "picture": "https://lh6.googleusercontent.com/-LdIUNFJBriQ/AAAAAAAAAAI/AAAAAAAAAvI/HUwlqct9yJY/photo.jpg",
-          "status": 10,
-          "eventMail": null,
-          "createdAt": "2017-02-07T15:28:51.000Z",
-          "updatedAt": "2017-02-07T15:53:11.000Z"
+          "phone": "426351789",
+          "college": "mycollege"
         }
       ]
     }
-     * @apiUse tokenErrors
-     */
+  ]
+}
+
+ * @apiSuccessExample singleEvent
+ * {
+  "name": "myEvent",
+  "group": false,
+  "students": [
+    {
+      "id": 100006,
+      "name": "John Doe",
+      "email": "johndoe@gmail.com",
+      "phone": "426351789",
+      "college": "mycollege",
+      "paid": false,
+      "group": []
+    }
+  ]
+}
+ * @apiErrorExample error
+    {"code":14,"message":"Could not find event to register"}
+ * 
+ * @apiUse tokenErrors
+ */
+router.get('/registeredCount/:eventId', (req, res, next) => {
+    try {
+        models.event.findOne({
+            where: {
+                id: req.params.eventId
+            },
+            attributes: ['name', 'group'],
+            include: [{
+                model: models.student,
+                attributes: ['id', 'name', 'email', 'phone'],
+                include: [{
+                    model: models.college,
+                    attributes: ['name']
+                }]
+            }, {
+                model: models.groupStudent,
+                attributes: ['eventStudentId'],
+                include: [{
+                    model: models.student,
+                    attributes: ['id', 'name', 'email', 'phone'],
+                    include: [{
+                        model: models.college,
+                        attributes: ['name']
+                    }],
+                }]
+            }]
+        }).then(studentList => {
+            object = JSON.parse(JSON.stringify(studentList));
+            object.students = studentList.students.map(x => {
+                var eventStudentId = 0;
+                studentObject = {};
+                studentObject.id = x.id;
+                studentObject.name = x.name;
+                studentObject.email = x.email;
+                studentObject.phone = x.phone;
+                if (x.college && x.college.name)
+                    studentObject.college = x.college.name;
+                else
+                    studentObject.college = "other";
+                if (x.event_student) {
+                    studentObject.paid = x.event_student.paid;
+                    eventStudentId = x.event_student.id;
+                }
+                studentObject.group = _.filter(studentList.group_students, x => {
+                    return x.eventStudentId == eventStudentId;
+                });
+                studentObject.group = studentObject.group.map(x => {
+                    studentGroupObject = {};
+                    studentGroupObject.id = x.student.id;
+                    studentGroupObject.name = x.student.name;
+                    studentGroupObject.email = x.student.email;
+                    studentGroupObject.phone = x.student.phone;
+                    if (x.student.college && x.student.college.name)
+                        studentGroupObject.college = x.student.college.name;
+                    else
+                        studentGroupObject.college = "other";
+                    return studentGroupObject;
+                });
+                return studentObject;
+            });
+            delete(object.group_students);
+            return res.json(object);
+            console.log(error);
+        }).catch(error => {
+            constant.noEventError.data = error;
+            return res.status(400).json(constant.noEventError);
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+});
+/**
+ * @api {get} /dcms-admin/event/:id get event
+ * @apiName Get Event
+ * @apiGroup Admin/Event
+ *
+ *
+ * @apiSuccessExample {json} success
+{
+  "id": 1000000006,
+  "name": "Event Name changed",
+  "description": "Event description changed",
+  "format": "Event format",
+  "problemStatement": "Event problem Statement",
+  "prize1": 1,
+  "prize2": 2,
+  "prize3": 3,
+  "group": false,
+  "image": null,
+  "maxParticipants": 0,
+  "maxGroups": 0,
+  "createdAt": "2017-02-07T15:49:05.000Z",
+  "updatedAt": "2017-02-07T15:49:06.000Z",
+  "admins": [],
+  "allAdmins": [
+    {
+      "id": 1,
+      "name": "nisham mohammed",
+      "uid": "bJ1rrx0lpVSbUPs1WphU0BHfItD2",
+      "email": "mnishamk1995@gmail.com",
+      "phone": null,
+      "picture": "https://lh6.googleusercontent.com/-LdIUNFJBriQ/AAAAAAAAAAI/AAAAAAAAAvI/HUwlqct9yJY/photo.jpg",
+      "status": 0,
+      "eventMail": null,
+      "createdAt": "2017-02-07T15:03:46.000Z",
+      "updatedAt": "2017-02-07T15:03:46.000Z"
+    },
+    {
+      "id": 2,
+      "name": "John Doe",
+      "uid": "cJ2crx0lpVSbvPs1VbhU0BHgItE2",
+      "email": "johndoe@gmail.com",
+      "phone": null,
+      "picture": "https://lh6.googleusercontent.com/-LdIUNFJBriQ/AAAAAAAAAAI/AAAAAAAAAvI/HUwlqct9yJY/photo.jpg",
+      "status": 10,
+      "eventMail": null,
+      "createdAt": "2017-02-07T15:28:51.000Z",
+      "updatedAt": "2017-02-07T15:53:11.000Z"
+    }
+  ]
+}
+ * @apiUse tokenErrors
+ */
 router.get('/:id', (req, res, next) => {
     let event = null
     models.event.findOne({
