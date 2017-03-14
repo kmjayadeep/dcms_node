@@ -100,11 +100,12 @@ router.get('/eventRegistered/:id', (req, res, next) => {
 
 /**
  * @api {post} /dcms-admin/volunteer/registeredEvents get registered events
+ * @apiDeprecated please use (#volunteer:GetDcmsAdminVolunteerRegisteredeventsIdentifier)
  * @apiParam {String} [uid] qr code scanned uid of student
  * @apiParam {String} [phone] Phone number of student
  * @apiParam {String} [email] email id of student
  * @apiDescription get all registered events of a student, the student is identified through either of email, phone number or uid(from qr scan)
- * @apiVersion 0.1.0
+ * @apiVersion 0.2.0
  * @apiGroup volunteer
  * @apiSuccessExample {json} success
  * [
@@ -347,7 +348,7 @@ function removeDuplicates(originalArray, prop) {
 }
 
 /**
- * @api {get} /dcms-admin/volunteer/registeredEvents (get) registered events
+ * @api {get} /dcms-admin/volunteer/registeredEvents/:identifier (get) registered events
  * @apiParam {String} identifier either uid, phone or email of student
  * @apiDescription get all registered events of a student, the student is identified through either of email, phone number or uid(from qr scan). This is improved method than the one that uses post.
  * @apiVersion 0.1.0
@@ -364,7 +365,7 @@ function removeDuplicates(originalArray, prop) {
     "isWorkshop": false
   },
   {
-    "id": 1,
+    "id": 2,
     "paid": true,
     "registeredStudent": 100005,
     "name": "myEvent2",
