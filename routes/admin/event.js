@@ -415,51 +415,54 @@ router.get('/registeredCount', (req, res, next) => {
  * @apiVersion 0.2.0
  * @apiSuccessExample groupEvent
 {
-  "name": "myEvent",
-  "group": true,
-  "students": [
-    {
-      "id": 100005,
-      "name": "random name",
-      "email": "coolemail@email.com",
-      "phone": "65498731",
-      "college": "bmycollege",
-      "paid": true,
-      "group": [
-        {
-          "id": 100005,
-          "name": "random name",
-          "email": "coolemail@email.com",
-          "phone": "65498731",
-          "college": "bmycollege"
-        },
-        {
-          "id": 100006,
-          "name": "John Doe",
-          "email": "johndoe@gmail.com",
-          "phone": "426351789",
-          "college": "mycollege"
-        }
-      ]
-    }
-  ]
+	"name": "myEvent",
+	"group": true,
+	"students": [
+		{
+			"id": 100005,
+			"name": "random name",
+			"email": "coolemail@email.com",
+			"phone": "65498731",
+			"college": "bmycollege",
+			"paid": true,
+			"group": [
+				{
+					"id": 100005,
+					"name": "random name",
+					"email": "coolemail@email.com",
+					"phone": "65498731",
+					"college": "bmycollege"
+				},
+				{
+					"id": 100006,
+					"name": "John Doe",
+					"email": "johndoe@gmail.com",
+					"phone": "426351789",
+					"college": "mycollege"
+				}
+			]
+		}
+	],
+	"studentCount": 1,
+	"totalCount": 2
 }
 
  * @apiSuccessExample singleEvent
- * {
-  "name": "myEvent",
-  "group": false,
-  "students": [
-    {
-      "id": 100006,
-      "name": "John Doe",
-      "email": "johndoe@gmail.com",
-      "phone": "426351789",
-      "college": "mycollege",
-      "paid": false,
-      "group": []
-    }
-  ]
+{
+	"name": "myEvent",
+	"group": false,
+	"students": [
+		{
+			"id": 100006,
+			"name": "John Doe",
+			"email": "johndoe@gmail.com",
+			"phone": "426351789",
+			"college": "mycollege",
+			"paid": false,
+			"group": []
+		}
+	],
+	"studentCount": 1
 }
  * @apiErrorExample error
     {"code":14,"message":"Could not find event to register"}
@@ -526,6 +529,9 @@ router.get('/registeredCount/:eventId', (req, res, next) => {
                 });
                 return studentObject;
             });
+            object.studentCount = object.students.length;
+            if (object.group_students.length > 0)
+                object.totalCount = object.group_students.length;
             delete(object.group_students);
             return res.json(object);
             console.log(error);
