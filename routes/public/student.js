@@ -4,7 +4,7 @@ var models = require('../../models');
 var constant = require('../../constant');
 var _ = require('underscore');
 /**
- * @api {post} /public/student/:query get student Details
+ * @api {get} /public/student/:query get student Details
  * @apiDescription get the details of student using either phone number or email
  * @apiParam {string} query either email or phonenumber of user
  * @apiGroup Public/Student
@@ -31,7 +31,7 @@ var _ = require('underscore');
  * 
  */
 router.get('/:query', (req, res, next) => {
-  console.log(req.params.query)
+    console.log(req.params.query)
     models.student.findOne({
         where: {
             $or: [{

@@ -50,6 +50,7 @@ router.get('/', (req, res, next) => {
   "createdAt": "2017-03-11T18:28:33.000Z"
 }
 
+    @apiSampleRequest http://server.drishticet.org/public/college 
     @apiErrorExample error
     {"code":22,"message":"Could not put college"}
  */
