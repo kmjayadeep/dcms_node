@@ -320,6 +320,20 @@ function merge_object_arrays(arr1, arr2, match) {
     );
 }
 
+function removeDuplicates(originalArray, prop) {
+    var newArray = [];
+    var lookupObject = {};
+
+    for (var i in originalArray) {
+        lookupObject[originalArray[i][prop]] = originalArray[i];
+    }
+
+    for (i in lookupObject) {
+        newArray.push(lookupObject[i]);
+    }
+    return newArray;
+}
+
 /**
  * @api {get} /dcms-admin/volunteer/registeredEvents (get) registered events
  * @apiParam {String} identifier either uid, phone or email of student
@@ -389,6 +403,7 @@ router.get('/registeredEvents/:identifier', (req, res, next) => {
         return Promise.all([getEventStudent, getGroupStudent])
             .spread((eventStudent, groupStudent) => {
                 eventStudent = eventStudent.concat(groupStudent);
+                eventStudent = removeDuplicates(eventStudent, 'id');
                 eventIds = eventStudent.map(x => {
                     return x.eventId
                 });
@@ -399,6 +414,7 @@ router.get('/registeredEvents/:identifier', (req, res, next) => {
                         registeredStudent: x.studentId
                     }
                 });
+                eventIds = Array.from(new Set(eventIds));
                 return models.event.findAll({
                     where: {
                         $or: [{
@@ -416,9 +432,9 @@ router.get('/registeredEvents/:identifier', (req, res, next) => {
                             isWorkshop: x.isWorkshop
                         }
                     });
-                    console.log(newEventStudent)
                     newResult = merge_object_arrays(newEventStudent, newEventList, 'eventId', 'id');
                     return new Promise((res, rej) => {
+                        newResult = Array.from(new Set(newResult));
                         res(newResult);
                     })
                 });
