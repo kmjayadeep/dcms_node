@@ -198,6 +198,11 @@ router.post('/registeredEvents', (req, res, next) => {
  * @apiUse tokenErrors
  */
 router.post('/addScore/:identifier', (req, res, next) => {
+    if (!req.body.reason)
+        req.body.reason = "unspecified";
+    if (!req.body.addScore)
+        req.body.addScore = 0;
+    var studentId = 0;
     models.student.findOne({
         where: {
             $or: [{
@@ -209,11 +214,17 @@ router.post('/addScore/:identifier', (req, res, next) => {
             }]
         }
     }).then(result => {
-        if (!req.body.addScore)
-            req.body.addScore = 0;
         if (!result)
             return new Promise((res, rej) => rej("invalid identifier"));
+        studentId = result.toJSON().id;
         result.increment('score', { by: req.body.addScore });
+    }).then(result => {
+        return models.transaction.create({
+            reason: req.body.reason,
+            score: req.body.addScore,
+            studentId: studentId,
+            adminId: req.admin.id
+        });
     }).then(result => {
         return res.json("success");
     }).catch(error => {
