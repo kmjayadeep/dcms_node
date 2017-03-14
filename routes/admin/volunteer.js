@@ -366,85 +366,91 @@ function removeDuplicates(originalArray, prop) {
  * @apiUse tokenErrors
  */
 router.get('/registeredEvents/:identifier', (req, res, next) => {
-    models.student.findOne({
-        where: {
-            $or: [{
-                email: req.params.identifier
-            }, {
-                phone: req.params.identifier
-            }, {
-                id: req.params.identifier
-            }]
-        }
-    }).then(student => {
-        var getGroupStudent = models.groupStudent.findAll({
+    try {
+
+        models.student.findOne({
             where: {
-                studentId: student.id
+                $or: [{
+                    email: req.params.identifier
+                }, {
+                    phone: req.params.identifier
+                }, {
+                    id: req.params.identifier
+                }]
             }
-        }).then(groupStudents => {
-            var eventStudentIds = groupStudents.map(x => {
-                return x.eventStudentId;
-            });
-            return models.eventStudent.findAll({
+        }).then(student => {
+            var getGroupStudent = models.groupStudent.findAll({
                 where: {
-                    $or: [{
-                        id: eventStudentIds
-                    }],
+                    studentId: student.id
+                }
+            }).then(groupStudents => {
+                var eventStudentIds = groupStudents.map(x => {
+                    return x.eventStudentId;
+                });
+                return models.eventStudent.findAll({
+                    where: {
+                        $or: [{
+                            id: eventStudentIds
+                        }],
+                    },
+                    attributes: ['eventId', 'paid', 'studentId']
+                });
+            });
+            var getEventStudent = models.eventStudent.findAll({
+                where: {
+                    studentId: student.id
                 },
                 attributes: ['eventId', 'paid', 'studentId']
             });
-        });
-        var getEventStudent = models.eventStudent.findAll({
-            where: {
-                studentId: student.id
-            },
-            attributes: ['eventId', 'paid', 'studentId']
-        });
-        return Promise.all([getEventStudent, getGroupStudent])
-            .spread((eventStudent, groupStudent) => {
-                eventStudent = eventStudent.concat(groupStudent);
-                eventStudent = removeDuplicates(eventStudent, 'id');
-                eventIds = eventStudent.map(x => {
-                    return x.eventId
-                });
-                newEventStudent = eventStudent.map(x => {
-                    return {
-                        id: x.eventId,
-                        paid: x.paid,
-                        registeredStudent: x.studentId
-                    }
-                });
-                eventIds = Array.from(new Set(eventIds));
-                return models.event.findAll({
-                    where: {
-                        $or: [{
-                            id: eventIds
-                        }]
-                    },
-                    attributes: ['id', 'name', 'day', 'time', 'isWorkshop']
-                }).then(result => {
-                    newEventList = result.map(x => {
+            return Promise.all([getEventStudent, getGroupStudent])
+                .spread((eventStudent, groupStudent) => {
+                    eventStudent = eventStudent.concat(groupStudent);
+                    eventIds = eventStudent.map(x => {
+                        return x.eventId
+                    });
+                    newEventStudent = eventStudent.map(x => {
                         return {
-                            id: x.id,
-                            name: x.name,
-                            day: x.day,
-                            time: x.time,
-                            isWorkshop: x.isWorkshop
+                            id: x.eventId,
+                            paid: x.paid,
+                            registeredStudent: x.studentId
                         }
                     });
-                    newResult = merge_object_arrays(newEventStudent, newEventList, 'eventId', 'id');
-                    return new Promise((res, rej) => {
-                        newResult = Array.from(new Set(newResult));
-                        res(newResult);
-                    })
+                    eventIds = Array.from(new Set(eventIds));
+                    return models.event.findAll({
+                        where: {
+                            $or: [{
+                                id: eventIds
+                            }]
+                        },
+                        attributes: ['id', 'name', 'day', 'time', 'isWorkshop']
+                    }).then(result => {
+                        newEventList = result.map(x => {
+                            return {
+                                id: x.id,
+                                name: x.name,
+                                day: x.day,
+                                time: x.time,
+                                isWorkshop: x.isWorkshop
+                            }
+                        });
+                        // res.json({ event: newEventStudent, list: newEventList });
+                        newResult = merge_object_arrays(newEventStudent, newEventList, 'id', 'id');
+                        return new Promise((res, rej) => {
+                            newResult = Array.from(new Set(newResult));
+                            newResult = removeDuplicates(newResult, 'id');
+                            res(newResult);
+                        })
+                    });
                 });
-            });
-    }).then(result => {
-        return res.json(result);
-    }).catch(error => {
-        debug(error)
-        constant.cantfetchEvent.data = error;
-        return res.status(400).json(constant.cantfetchEvent);
-    });
+        }).then(result => {
+            return res.json(result);
+        }).catch(error => {
+            debug(error)
+            constant.cantfetchEvent.data = error;
+            return res.status(400).json(constant.cantfetchEvent);
+        });
+    } catch (error) {
+        console.log(error);
+    }
 });
 module.exports = router;
