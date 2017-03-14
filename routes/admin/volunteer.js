@@ -205,7 +205,7 @@ router.post('/addScore/:identifier', (req, res, next) => {
             }, {
                 phone: req.params.identifier
             }, {
-                uid: req.params.identifier
+                id: req.params.identifier
             }]
         }
     }).then(result => {
@@ -247,7 +247,7 @@ router.post('/confirmPayment/:identifier', (req, res, next) => {
             }, {
                 phone: req.params.identifier
             }, {
-                uid: req.params.identifier
+                id: req.params.identifier
             }]
         }
     });
@@ -359,7 +359,7 @@ router.get('/registeredEvents/:identifier', (req, res, next) => {
             }, {
                 phone: req.params.identifier
             }, {
-                uid: req.params.identifier
+                id: req.params.identifier
             }]
         }
     }).then(student => {
