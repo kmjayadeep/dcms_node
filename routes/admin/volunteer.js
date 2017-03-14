@@ -190,6 +190,7 @@ router.post('/registeredEvents', (req, res, next) => {
  * @apiVersion 0.1.0
  * @apiParam {string} :identifier either uid, email or phone number of student.
  * @apiParam {int} addScore how much the score should be increased
+ * @apiParam {string} reason why the score was increased, make it mandatory (but will result in a lot of one letter reasons)
  * @apiSuccessExample success
  * "success"
  * @apiErrorExample error
