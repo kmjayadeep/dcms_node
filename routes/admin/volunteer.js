@@ -253,68 +253,87 @@ router.post('/addScore/:identifier', (req, res, next) => {
 router.post('/confirmPayment/:identifier', (req, res, next) => {
     if (!req.body.paid)
         req.body.paid = true;
-    var findStudent = models.student.findOne({
-        where: {
-            $or: [{
-                email: req.params.identifier
-            }, {
-                phone: req.params.identifier
-            }, {
-                id: req.params.identifier
-            }]
-        }
-    });
-    var findEvent = models.event.findOne({
-        where: {
-            id: req.body.eventId
-        }
-    });
-    Promise.all([findStudent, findEvent])
-        .spread((student, event) => {
-            if (!student)
-                return new Promise((res, rej) => rej("invalid identifier"));
-            if (!event)
-                return new Promise((res, rej) => rej("invalid eventId"));
-            if (event.group) {
-                return models.groupStudent.findOne({
-                    where: {
-                        eventId: req.body.eventId,
-                        studentId: student.id
-                    }
-                })
-            } else {
-                return models.eventStudent.findOne({
-                    where: {
-                        eventId: req.body.eventId,
-                        studentId: student.id
-                    }
-                });
+    models.student.findOne({
+            where: {
+                $or: [{
+                    email: req.params.identifier
+                }, {
+                    phone: req.params.identifier
+                }, {
+                    id: req.params.identifier
+                }]
             }
-        }).then(result => {
-            debug(result.toJSON());
-            //could either be eventStudent or groupStudent
-            // if groupStudent, find event_student
-            if (result.toJSON().eventStudentId)
-                return models.eventStudent.findOne({
-                    where: {
-                        id: result.toJSON().eventStudentId
-                    }
-                });
-            else
-                return new Promise((res, rej) => res(result));
-            //if eventStudent, return itself
-        }).then(result => {
-            return result.update({ 'paid': req.body.paid });
-        }).then(result => {
-            if (result)
-                res.json("success");
-            else
-                return new Promise((res, rej) => rej("could not update"));
-        }).catch(error => {
-            debug("error", error);
-            constant.noStudentFound.data = error;
+        })
+        .then(student => {
+            return models.eventStudent.findOne({
+                where: {
+                    eventId: req.body.eventId,
+                    studentId: student.id
+                }
+            })
+        })
+        .then(eventStudent => {
+            eventStudent.paid = req.body.paid
+            return eventStudent.save()
+        })
+        .then(eventStudent => {
+            res.json(eventStudent)
+        })
+        .catch(err => {
+            constant.noStudentFound.data = err;
             return res.status(400).json(constant.noStudentFound);
-        });
+        })
+        // var findEvent = models.event.findOne({
+        //     where: {
+        //         id: req.body.eventId
+        //     }
+        // });
+        // Promise.all([findStudent, findEvent])
+        //     .spread((student, event) => {
+        //         if (!student)
+        //             return new Promise((res, rej) => rej("invalid identifier"));
+        //         if (!event)
+        //             return new Promise((res, rej) => rej("invalid eventId"));
+        //         if (event.group) {
+        //             return models.groupStudent.findOne({
+        //                 where: {
+        //                     eventId: req.body.eventId,
+        //                     studentId: student.id
+        //                 }
+        //             })
+        //         } else {
+        //             return models.eventStudent.findOne({
+        //                 where: {
+        //                     eventId: req.body.eventId,
+        //                     studentId: student.id
+        //                 }
+        //             });
+        //         }
+        //     }).then(result => {
+        //         debug(result.toJSON());
+        //         //could either be eventStudent or groupStudent
+        //         // if groupStudent, find event_student
+        //         if (result.toJSON().eventStudentId)
+        //             return models.eventStudent.findOne({
+        //                 where: {
+        //                     id: result.toJSON().eventStudentId
+        //                 }
+        //             });
+        //         else
+        //             return new Promise((res, rej) => res(result));
+        //         //if eventStudent, return itself
+        //     }).then(result => {
+        //         return result.update({ 'paid': req.body.paid });
+        //     }).then(result => {
+        //         if (result)
+        //             res.json("success");
+        //         else
+        //             return new Promise((res, rej) => rej("could not update"));
+        //     }).catch(error => {
+        //         debug("error", error);
+        //         constant.noStudentFound.data = error;
+        //         return res.status(400).json(constant.noStudentFound);
+        //     });
 });
 
 function merge_object_arrays(arr1, arr2, match) {
@@ -382,86 +401,87 @@ router.get('/registeredEvents/:identifier', (req, res, next) => {
     try {
 
         models.student.findOne({
-            where: {
-                $or: [{
-                    email: req.params.identifier
-                }, {
-                    phone: req.params.identifier
-                }, {
-                    id: req.params.identifier
-                }]
-            }
-        }).then(student => {
-            var getGroupStudent = models.groupStudent.findAll({
                 where: {
-                    studentId: student.id
+                    $or: [{
+                        email: req.params.identifier
+                    }, {
+                        phone: req.params.identifier
+                    }, {
+                        id: req.params.identifier
+                    }]
                 }
-            }).then(groupStudents => {
-                var eventStudentIds = groupStudents.map(x => {
-                    return x.eventStudentId;
-                });
-                return models.eventStudent.findAll({
+            })
+            .then(student => {
+                var getGroupStudent = models.groupStudent.findAll({
                     where: {
-                        $or: [{
-                            id: eventStudentIds
-                        }],
+                        studentId: student.id
+                    }
+                }).then(groupStudents => {
+                    var eventStudentIds = groupStudents.map(x => {
+                        return x.eventStudentId;
+                    });
+                    return models.eventStudent.findAll({
+                        where: {
+                            $or: [{
+                                id: eventStudentIds
+                            }],
+                        },
+                        attributes: ['eventId', 'paid', 'studentId']
+                    });
+                });
+                var getEventStudent = models.eventStudent.findAll({
+                    where: {
+                        studentId: student.id
                     },
                     attributes: ['eventId', 'paid', 'studentId']
                 });
-            });
-            var getEventStudent = models.eventStudent.findAll({
-                where: {
-                    studentId: student.id
-                },
-                attributes: ['eventId', 'paid', 'studentId']
-            });
-            return Promise.all([getEventStudent, getGroupStudent])
-                .spread((eventStudent, groupStudent) => {
-                    eventStudent = eventStudent.concat(groupStudent);
-                    eventIds = eventStudent.map(x => {
-                        return x.eventId
-                    });
-                    newEventStudent = eventStudent.map(x => {
-                        return {
-                            id: x.eventId,
-                            paid: x.paid,
-                            registeredStudent: x.studentId
-                        }
-                    });
-                    eventIds = Array.from(new Set(eventIds));
-                    return models.event.findAll({
-                        where: {
-                            $or: [{
-                                id: eventIds
-                            }]
-                        },
-                        attributes: ['id', 'name', 'day', 'time', 'isWorkshop']
-                    }).then(result => {
-                        newEventList = result.map(x => {
+                return Promise.all([getEventStudent, getGroupStudent])
+                    .spread((eventStudent, groupStudent) => {
+                        eventStudent = eventStudent.concat(groupStudent);
+                        eventIds = eventStudent.map(x => {
+                            return x.eventId
+                        });
+                        newEventStudent = eventStudent.map(x => {
                             return {
-                                id: x.id,
-                                name: x.name,
-                                day: x.day,
-                                time: x.time,
-                                isWorkshop: x.isWorkshop
+                                id: x.eventId,
+                                paid: x.paid,
+                                registeredStudent: x.studentId
                             }
                         });
-                        // res.json({ event: newEventStudent, list: newEventList });
-                        newResult = merge_object_arrays(newEventStudent, newEventList, 'id', 'id');
-                        return new Promise((res, rej) => {
-                            newResult = Array.from(new Set(newResult));
-                            newResult = removeDuplicates(newResult, 'id');
-                            res(newResult);
-                        })
+                        eventIds = Array.from(new Set(eventIds));
+                        return models.event.findAll({
+                            where: {
+                                $or: [{
+                                    id: eventIds
+                                }]
+                            },
+                            attributes: ['id', 'name', 'day', 'time', 'isWorkshop']
+                        }).then(result => {
+                            newEventList = result.map(x => {
+                                return {
+                                    id: x.id,
+                                    name: x.name,
+                                    day: x.day,
+                                    time: x.time,
+                                    isWorkshop: x.isWorkshop
+                                }
+                            });
+                            // res.json({ event: newEventStudent, list: newEventList });
+                            newResult = merge_object_arrays(newEventStudent, newEventList, 'id', 'id');
+                            return new Promise((res, rej) => {
+                                newResult = Array.from(new Set(newResult));
+                                newResult = removeDuplicates(newResult, 'id');
+                                res(newResult);
+                            })
+                        });
                     });
-                });
-        }).then(result => {
-            return res.json(result);
-        }).catch(error => {
-            debug(error)
-            constant.cantfetchEvent.data = error;
-            return res.status(400).json(constant.cantfetchEvent);
-        });
+            }).then(result => {
+                return res.json(result);
+            }).catch(error => {
+                debug(error)
+                constant.cantfetchEvent.data = error;
+                return res.status(400).json(constant.cantfetchEvent);
+            });
     } catch (error) {
         console.log(error);
     }
