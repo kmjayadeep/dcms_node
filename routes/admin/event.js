@@ -169,8 +169,10 @@ router.post('/result/:id', (req, res, next) => {
 	}
 ]
 
+ * @apiSuccessExample no result yet
+ * []
  * @apiErrorExample error
- * #constant.resultNotFound#
+ * {"code":25,"message":"The result for this event could not be found"}
  * @apiUse tokenErrors
  */
 router.get('/result/:id', (req, res, next) => {
