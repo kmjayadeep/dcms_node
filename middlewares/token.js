@@ -52,7 +52,7 @@ module.exports = function(req, res, next) {
                     req.admin = admin;
                     if (req.url.startsWith('/dcms-admin/volunteer')) {
                         // if (req.admin.status >= 5)
-                            return next();
+                        return next();
                     } else
                         return next();
                 }
@@ -107,6 +107,13 @@ module.exports = function(req, res, next) {
                             if (req.url.startsWith('/dcms-admin/volunteer')) {
                                 if (req.admin.status >= 5)
                                     return next();
+                                else
+                                    return res.status(401).json(constant.notEnoughPrivilege);
+                            } else if (req.url.startsWith('/dcms-admin/notification')) {
+                                if (req.admin.status >= 8)
+                                    return next();
+                                else
+                                    return res.status(401).json(constant.notEnoughPrivilege);
                             } else
                                 return next();
                         }

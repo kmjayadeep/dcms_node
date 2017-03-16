@@ -106,6 +106,9 @@ module.exports = {
     cantUnregister: {
         code: 23,
         message: "Could not Unregister, Event registration entry not found"
+    },
+    notEnoughPrivilege: {
+        code: 24,
+        message: "You don't have permission to access this feature"
     }
-
 }
