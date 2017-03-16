@@ -46,10 +46,10 @@ module.exports = function(req, res, next) {
                     uid: req.profile.user_id
                 }
             }).then(admin => {
-                if (admin && admin.status) {
+                if (admin) {
                     req.admin = admin;
                     if (req.url.startsWith('/dcms-admin/volunteer')) {
-                        if (req.admin.status >= 5)
+                        // if (req.admin.status >= 5)
                             return next();
                     } else
                         return next();
