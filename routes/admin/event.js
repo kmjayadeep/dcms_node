@@ -96,6 +96,48 @@ router.put('/', function(req, res, next) {
 });
 
 /**
+ * @api {post} /dcms-admin/event/result/:id Update result
+ * @apiDescription Add results of an event, the people who won the event and their respective points. Does not increase score of individual
+ * @apiParam {Integer} :id id of the event
+ * @apiParam {string} identifier identifier of student, either email, or phone or id
+ * @apiParam {Integer} position position of student, 1,2 or 3
+ * @apiParam {Integer} points points the student has won
+ * @apiGroup Admin/Event
+ * @apiVersion 0.2.0
+ * 
+ * @apiSuccessExample success
+ * "success"
+ * 
+ * @apiErrorExample error
+ * {"code":11,"message":"Student could not be found"}
+ * @apiUse tokenErrors
+ */
+router.post('/result/:id', (req, res, next) => {
+    models.student.findOne({
+        where: {
+            $or: [{
+                email: req.body.identifier
+            }, {
+                phone: req.body.identifier
+            }, {
+                id: req.body.identifier
+            }]
+        }
+    }).then(student => {
+        return models.result.create({
+            position: req.body.position,
+            points: req.body.points,
+            eventId: req.params.id,
+            collegeId: student.collegeId,
+            studentId: student.id
+        });
+    }).then(result => {
+        res.json("success");
+    }).catch(error => {
+        res.status(400).json(constant.studentNotFound);
+    })
+});
+/**
  * @api {get} /dcms-admin/event/ get event list
  * @apiName Get Events
  * @apiGroup Admin/Event
