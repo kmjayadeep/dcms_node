@@ -200,7 +200,7 @@ router.post('/registeredEvents', (req, res, next) => {
  * @apiUse tokenErrors
  */
 router.post('/addScore/:identifier', (req, res, next) => {
-    if (!req.admin||req.admin.status <7)
+    if (!req.admin || req.admin.status < 7)
         return res.status(401).json('not authorized')
     if (!req.body.reason)
         req.body.reason = "unspecified";
@@ -255,7 +255,7 @@ router.post('/addScore/:identifier', (req, res, next) => {
 router.post('/confirmPayment/:identifier', (req, res, next) => {
     if (!req.body.paid)
         req.body.paid = true;
-    if (!req.admin||req.admin.status <7)
+    if (!req.admin || req.admin.status < 7)
         return res.status(401).json('not authorized')
 
     models.student.findOne({
@@ -279,12 +279,18 @@ router.post('/confirmPayment/:identifier', (req, res, next) => {
         })
         .then(eventStudent => {
             eventStudent.paid = req.body.paid
+            models.payment.create({
+                adminId: req.admin.id,
+                eventStudentId: eventStudent.id,
+                paid: req.body.paid
+            });
             return eventStudent.save()
         })
         .then(eventStudent => {
             res.json(eventStudent)
         })
         .catch(err => {
+            console.log(err);
             constant.noStudentFound.data = err;
             return res.status(400).json(constant.noStudentFound);
         })
