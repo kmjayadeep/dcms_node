@@ -102,6 +102,10 @@ module.exports = {
     cantPutCollege: {
         code: 22,
         message: "Could not put college"
+    },
+    cantUnregister: {
+        code: 23,
+        message: "Could not Unregister, Event registration entry not found"
     }
 
 }

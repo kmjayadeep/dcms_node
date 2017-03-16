@@ -65,7 +65,7 @@ router.put('/:id', (req, res, next) => {
                             msg: "No group tag found"
                         }))
                     }
-                    req.body.group = req.body.group.map((x)=>{
+                    req.body.group = req.body.group.map((x) => {
                         return parseInt(x);
                     });
                     req.body.group.push(student.id);
@@ -188,7 +188,6 @@ router.get('/:id', (req, res, next) => {
                     }
                 return res.json(result)
             }).catch(error => {
-                return res.json(error);
                 constant.noEventError.data = error;
                 return res.status(400).json(constant.noEventError);
             });
@@ -298,6 +297,83 @@ router.get('/', (req, res, next) => {
                 debug(error)
                 constant.cantfetchEvent.data = error;
                 res.status(400).json(constant.cantfetchEvent);
+            });
+    } catch (error) {
+        debug(error);
+    }
+});
+
+/**
+ * @api {delete} /student/event/:id unregister event
+ * @apiDescription Unregister to a particular event, useful in case the group was mistakenly added, WILL LOSE CONFIRMED PAYMENT STATUS, If any of the group members unregister, the whole group will be unregistered. USE WITH CAUTION. Currently implemented with cascade, if cascade is removed, should change api to manually remove the group members first.
+ * @apiGroup Student
+ * @apiVersion 0.2.0
+ *
+ * @apiParam {id} :id eventId
+ * 
+ * @apiParamExample {json} request
+ * {}
+ *
+ * @apiSuccessExample {string} "success"
+ * "success"
+ * 
+ * @apiErrorExample no event
+ * {"code":14,"message":"Could not find event to register"}
+ * 
+ * @apiErrorExample not registered
+    {"code":23,"message":"Could not Unregister, Event registration entry not found"}
+ * 
+ * @apiUse tokenErrors
+*/
+// TODO remove dependance to cascade
+router.delete('/:id', (req, res, next) => {
+    var findStudent = models.student.findOne({
+        where: {
+            uid: req.uid
+        }
+    });
+    var findEvent = models.event.findOne({
+        where: {
+            id: req.params.id
+        }
+    });
+    try {
+        Promise.all([findStudent, findEvent])
+            .spread((student, event) => {
+                if (event.group) {
+                    return models.groupStudent.findOne({
+                        where: {
+                            studentId: student.id,
+                            eventId: event.id
+                        },
+                        include: [{
+                            model: models.eventStudent
+                        }]
+                    });
+                } else {
+                    return models.eventStudent.findOne({
+                        where: {
+                            eventId: event.id,
+                            studentId: student.id
+                        }
+                    });
+                }
+            }).then((result) => {
+                debug("result", result);
+                if (result) {
+                    if (result.toJSON().event_student) {
+                        return result.dataValues.event_student.destroy();
+                    } else {
+                        return result.destroy();
+                    }
+                } else {
+                    return res.status(400).json(constant.cantUnregister);
+                }
+            }).then(result => {
+                return res.json("success");
+            }).catch(error => {
+                constant.noEventError.data = error;
+                return res.status(400).json(constant.noEventError);
             });
     } catch (error) {
         debug(error);
