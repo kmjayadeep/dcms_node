@@ -200,7 +200,7 @@ router.post('/registeredEvents', (req, res, next) => {
  * @apiUse tokenErrors
  */
 router.post('/addScore/:identifier', (req, res, next) => {
-    if (req.admin.status <7)
+    if (!req.admin||req.admin.status <7)
         return res.status(401).json('not authorized')
     if (!req.body.reason)
         req.body.reason = "unspecified";
@@ -255,7 +255,7 @@ router.post('/addScore/:identifier', (req, res, next) => {
 router.post('/confirmPayment/:identifier', (req, res, next) => {
     if (!req.body.paid)
         req.body.paid = true;
-    if (req.admin.status <7)
+    if (!req.admin||req.admin.status <7)
         return res.status(401).json('not authorized')
 
     models.student.findOne({
