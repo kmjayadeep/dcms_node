@@ -110,5 +110,9 @@ module.exports = {
     notEnoughPrivilege: {
         code: 24,
         message: "You don't have permission to access this feature"
+    },
+    resultNotFound: {
+        code: 25,
+        message: "The result for this event could not be found"
     }
 }

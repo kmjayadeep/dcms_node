@@ -137,6 +137,62 @@ router.post('/result/:id', (req, res, next) => {
         res.status(400).json(constant.studentNotFound);
     })
 });
+
+
+/**
+ * @api {get} /dcms-admin/event/result/:id Get result
+ * @apiDescription Get Result of an event
+ * @apiParam {Integer} :id id of the event
+ * @apiGroup Admin/Event
+ * @apiVersion 0.2.0
+ * 
+ * @apiSuccessExample success
+ * [
+	{
+		"id": 2,
+		"position": 1,
+		"points": 2,
+		"createdAt": "2017-03-16T18:26:16.000Z",
+		"updatedAt": "2017-03-16T18:26:16.000Z",
+		"eventId": 2,
+		"collegeId": 7,
+		"studentId": 100006,
+		"student": {
+			"id": 100006,
+			"name": "John Doe",
+			"email": "johndoe@gmail.com",
+			"phone": "426351789"
+		},
+		"college": {
+			"name": "mycollege"
+		}
+	}
+]
+
+ * @apiErrorExample error
+ * #constant.resultNotFound#
+ * @apiUse tokenErrors
+ */
+router.get('/result/:id', (req, res, next) => {
+    models.result.findAll({
+        where: {
+            eventId: req.params.id
+        },
+        include: [{
+            model: models.student,
+            attributes: ["id", "name", "email", "phone"]
+        }, {
+            model: models.college,
+            attributes: ["name"]
+        }]
+    }).then(resultList => {
+        res.json(resultList);
+    }).catch(error => {
+        res.status(400).json(constant.resultNotFound);
+    })
+});
+
+
 /**
  * @api {get} /dcms-admin/event/ get event list
  * @apiName Get Events
