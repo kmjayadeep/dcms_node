@@ -116,8 +116,8 @@ router.get('/collegeLeaderboard', (req, res, next) => {
             else
                 object.college = "not specified";
             return object;
-            return res.json(leaderboard);
         })
+        return res.json(leaderboard);
     }).catch(error => {
         constant.resultNotFound.data = error;
         return res.status(400).json(constant.resultNotFound);
