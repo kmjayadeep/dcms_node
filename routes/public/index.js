@@ -71,5 +71,57 @@ router.get('/leaderboard', (req, res, next) => {
     }).catch(error => {
         return res.status(400).json(constant.studentNotFound);
     })
-})
+});
+
+/**
+ * @api {get} /public/collegeLeaderboard college leaderboard
+ * @apiGroup Public
+ * @apiVersion 0.2.0
+ * @apiDescription Get the leaderbaord of the colleges based on event result points
+ * @apiSuccessExample collegeLeaderboard
+ * [
+	{
+		"points": 8,
+		"college": "mycollege"
+	},
+	{
+		"points": 2,
+		"college": "mycollege2"
+	}
+]
+ 
+ * @apiErrorExample error
+ * {"code":25,"message":"The result for this event could not be found"}
+ */
+router.get('/collegeLeaderboard', (req, res, next) => {
+    models.result.findAll({
+        where: {},
+        order: [
+            ['points', 'DESC']
+        ],
+        include: [{
+            model: models.college,
+            attributes: ['name']
+        }],
+        attributes: [
+            [models.sequelize.fn('sum', models.sequelize.col('points')), 'points']
+        ],
+        group: ['collegeId']
+    }).then(leaderboard => {
+        leaderboard = leaderboard.map(x => {
+            object = {};
+            object.points = x.points;
+            if (x.college && x.college.name)
+                object.college = x.college.name;
+            else
+                object.college = "not specified";
+            return object;
+            return res.json(leaderboard);
+        })
+    }).catch(error => {
+        constant.resultNotFound.data = error;
+        return res.status(400).json(constant.resultNotFound);
+    })
+});
+
 module.exports = router;
