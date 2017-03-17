@@ -97,7 +97,7 @@ router.put('/', function(req, res, next) {
 
 /**
  * @api {post} /dcms-admin/event/result/:id Update result
- * @apiDescription Add results of an event, the people who won the event and their respective points. Does not increase score of individual
+ * @apiDescription Add results of an event, the people who won the event and their respective points. INCREASES the score of the person who won(In case of group, increases score of group leader).
  * @apiParam {Integer} :id id of the event
  * @apiParam {string} identifier identifier of student, either email, or phone or id
  * @apiParam {Integer} position position of student, 1,2 or 3
@@ -124,6 +124,13 @@ router.post('/result/:id', (req, res, next) => {
             }]
         }
     }).then(student => {
+        // student.increment('score', { by: req.body.points });
+        // models.transaction.create({
+        //     reason: "Won " + req.body.position + " place",
+        //     score: req.body.points,
+        //     studentId: student.id,
+        //     adminId: req.admin.id
+        // });
         return models.result.create({
             position: req.body.position,
             points: req.body.points,

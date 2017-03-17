@@ -221,7 +221,8 @@ router.post('/addScore/:identifier', (req, res, next) => {
         if (!result)
             return new Promise((res, rej) => rej("invalid identifier"));
         studentId = result.toJSON().id;
-        result.increment('score', { by: req.body.addScore });
+        // TODO check if not returning it is error, and add a return statement
+        return result.increment('score', { by: req.body.addScore });
     }).then(result => {
         return models.transaction.create({
             reason: req.body.reason,
