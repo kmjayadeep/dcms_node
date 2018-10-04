@@ -14,8 +14,8 @@ Drishti/Dhwani Content Management System (DCMS) is a content management system t
 
 <!-- markdown-toc end -->
 
-## Contributing
-Check out our [contributing guide](CONTRIBUTING.md) for more details.
-
 ## License
 Feel free to fork this repo and modify it according to your needs. Leave me a note if you like this setup.
+
+## Contributing
+Check out our [contributing guide](CONTRIBUTING.md) for more details.
